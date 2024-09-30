@@ -5,6 +5,20 @@ import java.util.*;
 public class WaterSortSearch extends GenericSearch {
 
     // Solves problem using given strategy
+    /**
+     * Parse the initial state into an array of arrays of characters
+     * @param initialState - A provided string that defines the parameters of the instance of the problem. It gives the initial context of each bottle.
+     *                       It is a string provided in the following format:
+     *                          numberOfBottles; // is the number of bottles in problem
+     *                          bottleCapacity; // is the maximum number of layer each bottle can take
+     *                          .
+     *                          .
+     *                          .
+     *                          color_n_1, color_n_2,...,color_n_k
+     * @param strategy -
+     * @param visualize -
+     * @return String representing the sequence of actions to perform
+     */
     public static String solve(String initialState, String strategy, boolean visualize) {
         // format of returned string
         // plan;pathCost;nodesExpanded
@@ -15,13 +29,41 @@ public class WaterSortSearch extends GenericSearch {
         // Step 2:
         switch (strategy) {
             case "Depth-first search":
-                HashSet<String> visited = new HashSet<>();
-                return dfs(state, 0, visited, "").first;
+                Node dfsGoalNode = dfs(state);
+
+                if (dfsGoalNode == null) {
+                    return "NOSOLUTION";
+                }
+
+                // Print the final state of the tubes
+                System.out.println(stringfyState(dfsGoalNode.state));
+
+                // Return constructed solution
+                return constructSolution(dfsGoalNode);
+
+            case "Breadth-first search":
+                // Perform breadth-first search
+                Node bfsGoalNode = bfs(state);
+
+                if (bfsGoalNode == null) { // no goal node is found
+                    return "NOSOLUTION";
+                }
+
+                // Print the final state of the tubes
+                System.out.println(stringfyState(bfsGoalNode.state));
+
+                // Return constructed solution
+                return constructSolution(bfsGoalNode);
+
             default: return null;
         }
     }
 
-    // Parses initial state into array of arrays of characters
+    /**
+     * Parse the initial state into an array of arrays of characters
+     * @param initialState - the state that needs to be parsed
+     * @return State object
+     */
     private static State parseState(String initialState) {
         // State format
         // numberOf Bottles;
@@ -50,6 +92,11 @@ public class WaterSortSearch extends GenericSearch {
         return state;
     }
 
+    /**
+     * Parse the given state into a string
+     * @param state - the state that needs to be parsed
+     * @return string representing the tubes represented in the state variable
+     */
     public static String stringfyState(State state) {
 
         StringBuilder result = new StringBuilder();
@@ -70,45 +117,142 @@ public class WaterSortSearch extends GenericSearch {
         return result.toString();
     }
 
-    public static Pair<String, Boolean> dfs(State state, int depth, HashSet<String> visited, String path) {
+    /**
+     * Construct a solution by traversing back to the parent node till reaching root node
+     * @param goalNode - the goal node reached
+     * @return string representing the path of operations performed
+     */
+    public static String constructSolution(Node goalNode) {
+        Node node = goalNode;
+        StringBuilder operations = new StringBuilder();
 
-        // check if the current state is goal
-        if (checkGoal(state)) {
-            return new Pair<String, Boolean>(path, true);
+        while(node.parent != null) {
+            if (operations.isEmpty()) {
+                operations.insert(0, node.operator);
+            }
+            else {
+                operations.insert(0, node.operator + ",");
+            }
+            node = node.parent;
         }
 
-        List<Triple<Integer, Integer, Integer>> results = getAllNextPossibleState(state);
+        return operations.toString();
+    }
 
-        for (Triple<Integer, Integer, Integer> triple : results) {
+    /**
+     * Breadth first search
+     * @param initialState - the initial state of the tubes
+     * @return the goal node
+     */
+    public static Node bfs(State initialState) {
 
-            // create a new state from the current state
-            State newState = State.copy(state);
+        Queue<Node> queue = new LinkedList<>();
 
-            // pour from one tube to another to create a new state
-            pour(newState, triple.first, triple.second);
+        // Create root node
+        Node root = new Node(initialState, null, "", 0, 0);
 
-            String stringfyCurrentState = stringfyState(state);
-            String stringfyNewState = stringfyState(newState);
-            System.out.println("Depth: " + (depth + 1));
-            System.out.println("from: " + triple.first + " to: " + triple.second + " numOfLayers: " + triple.third);
-            System.out.println(stringfyCurrentState + " -> " + stringfyNewState);
-            System.out.println(Arrays.toString(state.arrayOfTopPointers) + " -> " + Arrays.toString(newState.arrayOfTopPointers));
-            System.out.println();
+        // Add root node to the queue
+        queue.add(root);
 
-            // skip the new state if we already visited it before to avoid running in a loop
-            if (visited.contains(stringfyNewState)) {
-                continue;
-            } else {
-                visited.add(stringfyNewState);
-                Pair<String, Boolean> outcome = dfs(newState, depth + 1, visited, path + "pour_" + triple.first + "_" + triple.second + ", ");
+        // Create a HashSet that checks whether a state has been visited previously
+        HashSet<String> visited = new HashSet<>();
 
-                if (outcome.second) {
-                    return outcome;
+        while (!queue.isEmpty()) {
+
+            // Get the current state
+            Node curentNode = queue.poll();
+
+            // Check that we reached a goal state
+            if (checkGoal(curentNode.state)) {
+                return curentNode;
+            }
+
+            // Get all possible next states from the current state
+            List<Triple<Integer, Integer, Integer>> results = getAllNextPossibleState(curentNode.state);
+
+            for (Triple<Integer, Integer, Integer> triple : results) {
+
+                // Create a new child state
+                State newChildState = State.copy(curentNode.state);
+
+                // Pour from one tube to another to create the new child state
+                pour(newChildState, triple.first, triple.second);
+
+                // Create the new child node
+                Node newChildNode = new Node(newChildState, curentNode, "pour_" + triple.first + "_" + triple.second, triple.third, curentNode.depth + 1);
+
+                // Stringfy state of the new child node created to determine whether it has been visited previously
+                String newChildStateString = stringfyState(newChildState);
+
+                // Check whether the new child node has been visited previously
+                if (!visited.contains(newChildStateString)) { // if child node is not visited previously
+                    // Add the newly created child node into the queue
+                    queue.add(newChildNode);
+                    visited.add(newChildStateString);
                 }
             }
         }
 
-        return new Pair<>("", false);
+        // No goal reached
+        return null;
+    }
+
+    /**
+     * Depth first search
+     * @param initialState - the initial state of the tubes
+     * @return the goal node
+     */
+    public static Node dfs(State initialState) {
+
+        Stack<Node> stack = new Stack<>();
+
+        // Create root node
+        Node root = new Node(initialState, null, "", 0, 0);
+
+        // Add root node to the queue
+        stack.add(root);
+
+        // Create a HashSet that checks whether a state has been visited previously
+        HashSet<String> visited = new HashSet<>();
+
+        while (!stack.isEmpty()) {
+
+            // Get the current state
+            Node curentNode = stack.pop();
+
+            // Check that we reached a goal state
+            if (checkGoal(curentNode.state)) {
+                return curentNode;
+            }
+
+            // Get all possible next states from the current state
+            List<Triple<Integer, Integer, Integer>> results = getAllNextPossibleState(curentNode.state);
+
+            for (Triple<Integer, Integer, Integer> triple : results) {
+
+                // Create a new child state
+                State newChildState = State.copy(curentNode.state);
+
+                // Pour from one tube to another to create the new child state
+                pour(newChildState, triple.first, triple.second);
+
+                // Create the new child node
+                Node newChildNode = new Node(newChildState, curentNode, "pour_" + triple.first + "_" + triple.second, triple.third, curentNode.depth + 1);
+
+                // Stringfy state of the new child node created to determine whether it has been visited previously
+                String newChildStateString = stringfyState(newChildState);
+
+                // Check whether the new child node has been visited previously
+                if (!visited.contains(newChildStateString)) { // if child node is not visited previously
+                    // Add the newly created child node into the queue
+                    stack.add(newChildNode);
+                    visited.add(newChildStateString);
+                }
+            }
+        }
+
+        // No goal reached
+        return null;
     }
 
     public static void pour(State state, int firstBottleIndex, int secondBottleIndex) {

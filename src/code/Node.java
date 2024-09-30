@@ -16,5 +16,4 @@ public class Node {
         this.depth = depth;
     }
 
-
 }
