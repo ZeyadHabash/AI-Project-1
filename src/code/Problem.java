@@ -1,12 +1,15 @@
 package code;
 
-import java.util.ArrayList;
-
 public abstract class Problem {
     public State initialState;
-    public Operator[] operators;
+    public String[] operators;
 
-    public abstract State transitionFunction(State state, Operator operator);
+    public Problem(State initialState, String[] operators) {
+        this.initialState = initialState;
+        this.operators = operators;
+    }
+
+    public abstract State transitionFunction(State state, String operator);
 
     public abstract boolean goalTest(State state);
 

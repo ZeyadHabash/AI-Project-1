@@ -15,5 +15,4 @@ public class Node {
         this.pathCost = pathCost;
         this.depth = depth;
     }
-
 }

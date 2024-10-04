@@ -1,8 +1,11 @@
 package code;
 
-public abstract class Operator {
+public class Operator {
 
-    String operation;
+    String operation; // ex: pour_1_2
 
+    public Operator(String op) {
+        operation = op;
+    }
 
 }
