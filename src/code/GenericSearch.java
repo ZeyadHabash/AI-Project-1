@@ -17,13 +17,15 @@ public class GenericSearch {
         while (true) {
             if (queue.isEmpty()) return null;
             Node node = queue.dequeue();
+            System.out.println("Current State: " + node.state);
             if(problem.goalTest(node.state)) return node;
             // TODO: enqueue next nodes in line
             switch (strategy) {
                 case "DF": case "BF": case "ID": case "UC":
                     queue.enqueue(strategy, expand(node, problem));
+
                 case "GR": case "AS":
-                    String heuristic = "";
+                    String heuristic = ""; // TODO
                     queue.enqueue(strategy, expand(node, problem), heuristic);
             }
         }
@@ -162,8 +164,4 @@ public class GenericSearch {
         // check whether the two different tubes contains the same top color & first bottle is not empty
         return (secondBottleTopColor == 'e' || firstBottleTopColor == secondBottleTopColor)  && firstBottleTopColor != 'e' && firstBottleIndex != secondBottleIndex && state.arrayOfTopPointers[secondBottleIndex] != 0;
     }
-
-//    public static void main(String[] args) {
-//        System.out.println(WaterSortSearch.solve("5;4;b,y,r,b;b,y,r,r;y,r,b,y;e,e,e,e;e,e,e,e;", "Depth-first search", false));
-//    }
 }

@@ -50,4 +50,24 @@ public class WaterSearchState extends State {
 
         return newState;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < this.numOfBottles; i++) {
+            for(int j = 0; j < this.bottleCapacity; j++) {
+                if (j != this.bottleCapacity - 1) {
+                    result.append(this.arrayOfTubes[i][j]).append(",");
+                }
+                else {
+                    result.append(this.arrayOfTubes[i][j]);
+                }
+            }
+
+            result.append(";");
+        }
+
+        return result.toString();
+    }
 }

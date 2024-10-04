@@ -15,4 +15,13 @@ public class Node {
         this.pathCost = pathCost;
         this.depth = depth;
     }
+
+    @Override
+    public String toString() {
+        return  "\n" +
+                "State: " + this.state + "\n" +
+                " * Operator: " + this.operator + "\n" +
+                " * Path Cost: " + this.pathCost + "\n" +
+                " * Length: " + this.depth + "\n";
+    }
 }

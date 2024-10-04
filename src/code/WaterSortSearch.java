@@ -47,7 +47,7 @@ public class WaterSortSearch extends GenericSearch {
 
             @Override
             public boolean goalTest(State state) {
-                return checkGoal((WaterSearchState) state);
+                return isGoal((WaterSearchState) state);
             }
 
             @Override
@@ -101,31 +101,6 @@ public class WaterSortSearch extends GenericSearch {
     }
 
     /**
-     * Parse the given state into a string
-     * @param state - the state that needs to be parsed
-     * @return string representing the tubes represented in the state variable
-     */
-    public static String stringfyState(WaterSearchState state) {
-
-        StringBuilder result = new StringBuilder();
-
-        for (int i = 0; i < state.numOfBottles; i++) {
-            for(int j = 0; j < state.bottleCapacity; j++) {
-                if (j != state.bottleCapacity - 1) {
-                    result.append(state.arrayOfTubes[i][j]).append(",");
-                }
-                else {
-                    result.append(state.arrayOfTubes[i][j]);
-                }
-            }
-
-            result.append(";");
-        }
-
-        return result.toString();
-    }
-
-    /**
      * Construct a solution by traversing back to the parent node till reaching root node (Path to goal)
      * @param goalNode the goal node reached
      * @return string representing the path of operations performed
@@ -147,7 +122,11 @@ public class WaterSortSearch extends GenericSearch {
         return operations.toString();
     }
 
-    // pour_firstBottleIndex_secondBottleIndex
+    /**
+     * Perform the operation on the state
+     * @param state the parent state to get the next state from it
+     * @param operation a string that represent the operation performed (example: pour_firstBottleIndex_secondBottleIndex)
+     */
     public static void pour(WaterSearchState state, String operation) {
 
         String[] parsedOperation = operation.split("_"); // ["pour", firstBottleIndex, secondBottleIndex]
@@ -185,17 +164,21 @@ public class WaterSortSearch extends GenericSearch {
         }
     }
 
-    public static boolean checkGoal(WaterSearchState state) {
+    /**
+     * Check whether a state is a goal state
+     * @param state a candidate state
+     * @return boolean whether a state is goal or not
+     */
+    public static boolean isGoal(WaterSearchState state) {
 
         boolean flag = true; // a flag that check that current state is a goal
 
-        // TODO check that tube reached its full capacity?
         for (int i = 0; i < state.numOfBottles; i++) {
             // if bottle is not empty to avoid index out of bound error
             if (state.arrayOfTopPointers[i] != -1) {
-                char initialColor = state.arrayOfTubes[i][0];
+                char initialColor = state.arrayOfTubes[i][state.arrayOfTopPointers[i]];
                 // traverse over a single tube
-                for (int j = 0; j < state.bottleCapacity; j++) {
+                for (int j = state.arrayOfTopPointers[i]; j < state.bottleCapacity; j++) {
                     if (state.arrayOfTubes[i][j] != initialColor) {
                         flag = false;
                     }
