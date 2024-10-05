@@ -1,5 +1,7 @@
 package code;
 
+import java.util.List;
+
 public abstract class Problem {
     public State initialState;
     public String[] operators;
@@ -14,5 +16,7 @@ public abstract class Problem {
     public abstract boolean goalTest(State state);
 
     public abstract int pathCost();
+
+    public abstract List<Node> expand(Node node);
 }
 
