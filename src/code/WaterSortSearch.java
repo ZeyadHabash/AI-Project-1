@@ -63,6 +63,7 @@ public class WaterSortSearch extends GenericSearch {
             public List<Node> expand(Node node) {
                 WaterSearchState parentState = (WaterSearchState) node.state;
                 List<Node> listOfPossibleNextNodes = new ArrayList<>();
+                int help = 78787;
 
                 for (int i = 0; i < parentState.numOfBottles; i++) {
                     for (int j = 0; j < parentState.numOfBottles; j++) {
