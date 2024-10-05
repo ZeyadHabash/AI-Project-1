@@ -5,6 +5,33 @@ import java.util.List;
 
 public class GenericSearch {
 
+
+    private static Node iterativeDeepeningSearch(Problem problem) {
+        int depthLimit = 0;
+        while (true) {
+            BaseQueue queue = makeQueue(makeNode(problem.initialState));
+            Node result = depthLimitedSearch(queue, problem, depthLimit);
+            if (result != null)
+                return result;
+            depthLimit++;
+        }
+    }
+
+    private static Node depthLimitedSearch(BaseQueue queue, Problem problem, int depthLimit) {
+        while (!queue.isEmpty()) {
+            Node node = queue.dequeue();
+            System.out.println("Current State: " + node.state + "    depth:" + node.depth + "     limit" + depthLimit);
+            if (problem.goalTest(node.state))
+                return node;
+            if (node.depth < depthLimit ) {
+                queue.enqueue("ID", expand(node, problem));
+
+            }
+        }
+        return null;
+    }
+
+
     /**
      * Calculate the cost of pouring from the first bottle into the second bottle.
      * @param problem general search problem
@@ -12,8 +39,10 @@ public class GenericSearch {
      * @return a goal node
      */
     public static Node generalSearch(Problem problem, String strategy) {
-        BaseQueue queue = makeQueue(makeNode(problem.initialState));
+        if (strategy.equals("ID"))
+            return iterativeDeepeningSearch(problem);
 
+        BaseQueue queue = makeQueue(makeNode(problem.initialState));
         while (true) {
             if (queue.isEmpty()) return null;
             Node node = queue.dequeue();
@@ -21,15 +50,18 @@ public class GenericSearch {
             if(problem.goalTest(node.state)) return node;
             // TODO: enqueue next nodes in line
             switch (strategy) {
-                case "DF": case "BF": case "ID": case "UC":
+                case "DF": case "BF": case "UC":
                     queue.enqueue(strategy, expand(node, problem));
 
                 case "GR": case "AS":
                     String heuristic = ""; // TODO
                     queue.enqueue(strategy, expand(node, problem), heuristic);
+
             }
         }
     }
+
+
 
     /**
      * Calculate the cost of pouring from the first bottle into the second bottle.

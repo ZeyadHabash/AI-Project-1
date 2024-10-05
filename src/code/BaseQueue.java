@@ -1,6 +1,7 @@
 package code;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -52,15 +53,27 @@ public class BaseQueue {
                     break;
                 case "UC":
                     // add to the queue in any order
-                    for (Node node : nodes) {
-                        queue.addLast(node);
-                    }
 
-                    // sort the queue
-                    sort();
+                    for (Node node : nodes) {
+                        if (!visitedStates.contains(node.state.toString())) {
+                            visitedStates.add(node.state.toString());
+                            queue.addFirst(node);
+                        }
+                    }
+                    this.sortCost();
                     break;
             }
         }
+    }
+    private void sortCost() {
+        System.out.println("I am in sorting");
+        List<Node> nodeList = new ArrayList<>();
+        while (!queue.isEmpty())
+            nodeList.add(queue.removeFirst());
+        nodeList.sort(Comparator.comparingInt(node -> node.pathCost));
+        for (Node node : nodeList)
+            queue.addLast(node);
+        System.out.println("queue"+ queue);
     }
 
     /**

@@ -162,6 +162,7 @@ public class WaterSortSearch extends GenericSearch {
         if (firstBottleTopPointer == state.bottleCapacity) {
             state.arrayOfTopPointers[firstBottleIndex] = -1; // Update to the new top
         }
+
     }
 
     /**
