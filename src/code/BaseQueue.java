@@ -1,9 +1,6 @@
 package code;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class BaseQueue {
 
@@ -36,6 +33,7 @@ public class BaseQueue {
                         if (!visitedStates.contains(node.state.toString())) {
                             visitedStates.add(node.state.toString());
                             queue.addFirst(node);
+                            System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                         }
                     }
 
@@ -47,6 +45,7 @@ public class BaseQueue {
                         if (!visitedStates.contains(node.state.toString())) {
                             visitedStates.add(node.state.toString());
                             queue.addLast(node);
+                            System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                         }
                     }
 
@@ -58,6 +57,7 @@ public class BaseQueue {
                         if (!visitedStates.contains(node.state.toString())) {
                             visitedStates.add(node.state.toString());
                             queue.addFirst(node);
+                            System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                         }
                     }
                     this.sortCost();
@@ -65,6 +65,8 @@ public class BaseQueue {
             }
         }
     }
+
+
     private void sortCost() {
         System.out.println("I am in sorting");
         List<Node> nodeList = new ArrayList<>();
@@ -77,27 +79,68 @@ public class BaseQueue {
     }
 
     /**
-    * Enqueue a node based on the strategy and heuristic for Greedy and A*
-    * @param strategy
-    * @param nodes
-    * @param heuristic
-    **/
-    public void enqueue(String strategy, List<Node> nodes, String heuristic) {
+     * Sort the queue based on the provided strategy
+     * @param strategy a string indicating the search strategy to be applied
+     **/
+    public void genericSort(String strategy, int heuristicNumber) {
+
         switch (strategy) {
-            case "GR":
+            case "UC":
+                queue.sort(Comparator.comparingInt(node -> node.pathCost));
+            case "GR1": case "GR2":
+                queue.sort(Comparator.comparingInt(node -> node.heuristicCost));
+            case "AR1": case "AR2":
+                // TODO sort based on heuristic number
+                queue.sort(Comparator.comparingInt(node -> node.heuristicCost + node.pathCost));
+        }
+    }
+
+    /**
+    * Enqueue a node based on the strategy and heuristic for Greedy and A*
+    * @param strategy a string indicating the search strategy to be applied
+    * @param nodes list of nodes to add it to the queue
+    * @param heuristicNumber an integer that represents the heuristic number to utilize
+    **/
+    public void enqueue(String strategy, List<Node> nodes, int heuristicNumber) {
+
+        switch (strategy) {
+            case "GR1":
                 // add the nodes to the end of the queue
                 for (Node node : nodes) {
-                    queue.addLast(node);
+                    if (!visitedStates.contains(node.state.toString())) {
+                        visitedStates.add(node.state.toString());
+                        node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost1((WaterSearchState) node.state));
+                        queue.addLast(node);
+                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+                    }
                 }
-                // TODO - sort based on heuristic
+
+                // sort the queue
+                genericSort(strategy, heuristicNumber);
+
                 break;
-            case "AS":
+
+            case "GR2":
+                // TODO
+
+            case "AS1":
                 // add to the queue in any order
                 for (Node node : nodes) {
-                    queue.addLast(node);
+                    if (!visitedStates.contains(node.state.toString())) {
+                        visitedStates.add(node.state.toString());
+                        node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost1((WaterSearchState) node.state));
+                        queue.addLast(node);
+                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+                    }
                 }
-                // TODO - sort based on heuristic
+
+                // sort the queue
+                genericSort(strategy, heuristicNumber);
+
                 break;
+
+            case "AS2":
+                // TODO
         }
     }
 

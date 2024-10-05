@@ -5,7 +5,6 @@ import java.util.List;
 
 public class GenericSearch {
 
-
     private static Node iterativeDeepeningSearch(Problem problem) {
         int depthLimit = 0;
         while (true) {
@@ -25,7 +24,6 @@ public class GenericSearch {
                 return node;
             if (node.depth < depthLimit ) {
                 queue.enqueue("ID", expand(node, problem));
-
             }
         }
         return null;
@@ -43,25 +41,31 @@ public class GenericSearch {
             return iterativeDeepeningSearch(problem);
 
         BaseQueue queue = makeQueue(makeNode(problem.initialState));
+
         while (true) {
             if (queue.isEmpty()) return null;
+
+//            System.out.println("Queue: " + queue);
             Node node = queue.dequeue();
-            System.out.println("Current State: " + node.state);
-            if(problem.goalTest(node.state)) return node;
+
+
+            if(problem.goalTest(node.state)) {
+                System.out.println(ConsoleColors.RED_BOLD + "Goal State: " + ConsoleColors.RESET + node.state);
+                return node;
+            }
+
+            System.out.println(ConsoleColors.RED_BOLD + "Current State: " + ConsoleColors.RESET + node.state);
             // TODO: enqueue next nodes in line
             switch (strategy) {
                 case "DF": case "BF": case "UC":
                     queue.enqueue(strategy, expand(node, problem));
-
-                case "GR": case "AS":
-                    String heuristic = ""; // TODO
-                    queue.enqueue(strategy, expand(node, problem), heuristic);
-
+                case "GR1": case "AS1":
+                    queue.enqueue(strategy, expand(node, problem), 1);
+                case "GR2": case "AS2":
+                    queue.enqueue(strategy, expand(node, problem), 2);
             }
         }
     }
-
-
 
     /**
      * Calculate the cost of pouring from the first bottle into the second bottle.
@@ -129,13 +133,15 @@ public class GenericSearch {
             State possibleNextState = problem.transitionFunction(node.state, operater);
 
             // add the next possible node to the list
-            listOfPossibleNextNodes.add(new Node(
-                possibleNextState,
-                node,
-                operater,
-                node.pathCost + costOfPourFromSecondToFirst,
-                node.depth + 1
-            ));
+            Node childNode = new Node(
+                    possibleNextState,
+                    node,
+                    operater,
+                    node.pathCost + costOfPourFromSecondToFirst,
+                    node.depth + 1
+            );
+
+            listOfPossibleNextNodes.add(childNode);
         }
     }
 
@@ -196,4 +202,5 @@ public class GenericSearch {
         // check whether the two different tubes contains the same top color & first bottle is not empty
         return (secondBottleTopColor == 'e' || firstBottleTopColor == secondBottleTopColor)  && firstBottleTopColor != 'e' && firstBottleIndex != secondBottleIndex && state.arrayOfTopPointers[secondBottleIndex] != 0;
     }
+
 }

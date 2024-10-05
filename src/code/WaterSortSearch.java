@@ -196,4 +196,43 @@ public class WaterSortSearch extends GenericSearch {
 
         return flag;
     }
+
+
+    /**
+     * Calculate the sum of the number of layers remaining for each tube to pour
+     * @param state the state for which to calculate its heuristic value
+     * @return an integer represent the heuristic cost of the state
+     */
+    public static int calculateHeuristicCost1(WaterSearchState state) {
+
+        // total number of layers remaining in each tube that need to be poured
+        int heuristicCost = 0;
+
+        // traverse over the list of tubes
+        for (int i = 0; i < state.numOfBottles; i++) {
+            char bottomLayerColor = state.arrayOfTubes[i][state.bottleCapacity - 1];
+            boolean flag = false; // a flag that check that no different color other than bottom layer color is detected
+
+            // if the tube is empty then skip
+            if (state.arrayOfTopPointers[i] == -1) {
+                continue;
+            }
+
+            for (int j = state.bottleCapacity - 1; j >= state.arrayOfTopPointers[i]; j--) {
+
+                if (!flag && bottomLayerColor != state.arrayOfTubes[i][j] && state.arrayOfTubes[i][j] != 'e') {
+                    flag = true;
+                    heuristicCost++;
+                }
+                else if (flag && state.arrayOfTubes[i][j] != 'e') {
+                    heuristicCost++;
+                }
+
+            }
+        }
+
+        // set the heuristic cost for the given node
+        return heuristicCost;
+    }
+
 }
