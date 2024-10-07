@@ -1,6 +1,7 @@
 package code;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class BaseQueue {
 
@@ -13,20 +14,21 @@ public class BaseQueue {
     }
 
     /**
-    * Enqueue a node based on the strategy
-    * @param strategy a string indicating the search strategy to be applied
-    * @param nodes list of nodes to add it to the queue
-    **/
+     * Enqueue a node based on the strategy
+     *
+     * @param strategy a string indicating the search strategy to be applied
+     * @param nodes    list of nodes to add it to the queue
+     **/
     public void enqueue(String strategy, List<Node> nodes) {
         // initially the root node is inserted at the beginning of the queue
         if (queue.isEmpty() & nodes.size() == 1 && nodes.getFirst().parent == null) {
             Node root = nodes.removeFirst();
             queue.addFirst(root);
             visitedStates.add(root.state.toString());
-        }
-        else {
+        } else {
             switch (strategy) {
-                case "DF": case "ID":
+                case "DF":
+                case "ID":
                     // add the nodes to the front of the queue
                     for (Node node : nodes) {
                         // check that the state is not visited
@@ -51,19 +53,11 @@ public class BaseQueue {
 
                     break;
 
-                case "UC":
+                case "UC": case "GR": case "AS":
                     for (Node node : nodes) {
                         if (!visitedStates.contains(node.state.toString())) {
                             visitedStates.add(node.state.toString());
-
-                            // Loop over the list to find the correct location
-                            int insertIndex = 0;
-                            while (insertIndex < queue.size() && queue.get(insertIndex).pathCost <= node.pathCost) {
-                                insertIndex++;
-                            }
-                            // Insert the node at this location
-                            queue.add(insertIndex, node);
-
+                            sortedInsert(strategy, node);
                             System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                         }
                     }
@@ -72,71 +66,41 @@ public class BaseQueue {
         }
     }
 
-    /**
-     * Sort the queue based on the provided strategy
-     * @param strategy a string indicating the search strategy to be applied
-     **/
-    public void genericSort(String strategy, int heuristicNumber) {
 
-        switch (strategy) {
-            case "UC":
-                queue.sort(Comparator.comparingInt(node -> node.pathCost));
-            case "GR1": case "GR2":
-                queue.sort(Comparator.comparingInt(node -> node.heuristicCost));
-            case "AR1": case "AR2":
-                // TODO sort based on heuristic number
-                queue.sort(Comparator.comparingInt(node -> node.heuristicCost + node.pathCost));
-        }
-    }
+
+
 
     /**
-    * Enqueue a node based on the strategy and heuristic for Greedy and A*
-    * @param strategy a string indicating the search strategy to be applied
-    * @param nodes list of nodes to add it to the queue
-    * @param heuristicNumber an integer that represents the heuristic number to utilize
-    **/
-    public void enqueue(String strategy, List<Node> nodes, int heuristicNumber) {
+     * Insert a node in the correct position based on the strategy
+     *
+     * @param strategy
+     * @param node
+     */
+    private void sortedInsert(String strategy, Node node) {
+        // get the sort value based on the strategy
+        // if greedy, sort based on heuristic cost
+        // if A*, sort based on heuristic cost + path cost
+        // if uniform cost, sort based on path cost
 
-        switch (strategy) {
-            case "GR1":
-                // add the nodes to the end of the queue
-                for (Node node : nodes) {
-                    if (!visitedStates.contains(node.state.toString())) {
-                        visitedStates.add(node.state.toString());
-                        node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost1((WaterSearchState) node.state));
-                        queue.addLast(node);
-                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
-                    }
-                }
-
-                // sort the queue
-                genericSort(strategy, heuristicNumber);
-
-                break;
-
-            case "GR2":
-                // TODO
-
-            case "AS1":
-                // add to the queue in any order
-                for (Node node : nodes) {
-                    if (!visitedStates.contains(node.state.toString())) {
-                        visitedStates.add(node.state.toString());
-                        node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost1((WaterSearchState) node.state));
-                        queue.addLast(node);
-                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
-                    }
-                }
-
-                // sort the queue
-                genericSort(strategy, heuristicNumber);
-
-                break;
-
-            case "AS2":
-                // TODO
+        // Loop over the list to find the correct location
+        int insertIndex = 0;
+        if (strategy.equals("GR")) {
+            while (insertIndex < queue.size() && queue.get(insertIndex).heuristicCost <= node.heuristicCost) {
+                insertIndex++;
+            }
+        } else if (strategy.equals("AS")) {
+            while (insertIndex < queue.size() && (queue.get(insertIndex).heuristicCost + queue.get(insertIndex).pathCost) <= node.heuristicCost + node.pathCost) {
+                insertIndex++;
+            }
+        } else {
+            while (insertIndex < queue.size() && queue.get(insertIndex).pathCost <= node.pathCost) {
+                insertIndex++;
+            }
         }
+        // Insert the node at this location
+        queue.add(insertIndex, node);
     }
+
 
     /**
      * Dequeue a node
@@ -147,15 +111,15 @@ public class BaseQueue {
     }
 
     /**
-    * Checks if queue is empty
-    **/
+     * Checks if queue is empty
+     **/
     public boolean isEmpty() {
         return queue.isEmpty();
     }
 
     /**
      * Sort Basic Queue
-    **/
+     **/
     private void sort() {
         // TODO
     }
@@ -171,3 +135,42 @@ public class BaseQueue {
         return result.toString().trim();
     }
 }
+
+
+//    /**
+//     * Sort the queue based on the provided strategy
+//     *
+//     * @param strategy a string indicating the search strategy to be applied
+//     **/
+//    public void genericSort(String strategy, int heuristicNumber) {
+//
+//        switch (strategy) {
+//            case "UC":
+//                queue.sort(Comparator.comparingInt(node -> node.pathCost));
+//            case "GR1":
+//            case "GR2":
+//                queue.sort(Comparator.comparingInt(node -> node.heuristicCost));
+//            case "AR1":
+//            case "AR2":
+//                // TODO sort based on heuristic number
+//                queue.sort(Comparator.comparingInt(node -> node.heuristicCost + node.pathCost));
+//        }
+//    }
+
+//    /**
+//     * Enqueue a node based on the strategy and heuristic for Greedy and A*
+//     *
+//     * @param strategy a string indicating the search strategy to be applied
+//     * @param nodes    list of nodes to add it to the queue
+//     **/
+//    public void enqueue(String strategy, List<Node> nodes, int heuristicValue) {
+//        for (Node node : nodes) {
+//            if (!visitedStates.contains(node.state.toString())) {
+//                visitedStates.add(node.state.toString());
+//                node.setHeuristicCost(heuristicValue);
+//                int insertIndex = 0;
+//                sortedInsert(strategy, node);
+//                System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+//            }
+//        }
+//    }

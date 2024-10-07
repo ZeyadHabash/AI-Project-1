@@ -98,13 +98,12 @@ public class GenericSearch {
 
             System.out.println(ConsoleColors.RED_BOLD + "Current State: " + ConsoleColors.RESET + node.state);
             // TODO: enqueue next nodes in line
+            // TODO: handle gr1 and as1 to GR and AS
             switch (strategy) {
+                case "GR" : case "AS":
+                    node.setHeuristicCost(problem.heuristicCost(node.state));
                 case "DF": case "BF": case "UC":
                     queue.enqueue(strategy, problem.expand(node));
-                case "GR1": case "AS1":
-                    queue.enqueue(strategy, problem.expand(node), 1);
-                case "GR2": case "AS2":
-                    queue.enqueue(strategy, problem.expand(node), 2);
             }
         }
     }

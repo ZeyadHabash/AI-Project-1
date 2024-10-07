@@ -18,5 +18,7 @@ public abstract class Problem {
     public abstract int pathCost();
 
     public abstract List<Node> expand(Node node);
+
+    public abstract int heuristicCost(State state);
 }
 

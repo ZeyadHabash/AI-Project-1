@@ -10,23 +10,24 @@ public class WaterSortSearch extends GenericSearch {
     /**
      * Solves problem using given strategy
      * Parse the initial state into an array of arrays of characters
+     *
      * @param initialState - A provided string that defines the parameters of the instance of the problem. It gives the initial context of each bottle.
-     *                       It is a string provided in the following format:
-     *                          numberOfBottles; // is the number of bottles in problem
-     *                          bottleCapacity; // is the maximum number of layer each bottle can take
-     *                          .
-     *                          .
-     *                          .
-     *                          color_n_1, color_n_2,...,color_n_k
-     * @param strategy - A string indicating the search strategy to be applied
-     *                 * BF for breadth-first search
-     *                 * DF for depth-first search
-     *                 * ID for iterative deepening search
-     *                 * UC for uniform cost search
-     *                 * GRi for greedy search, with i in {1, 2} distinguishing the two heuristics.
-     *                 * ASi for A* search with i in {1, 2} distinguishing the two heuristics.
-     * @param visualize - A boolean parameter which, when set to true, results in your program's side-effecting displaying
-     *                  the state information as it undergoes the different steps of the discovered solution (if one was discovered).
+     *                     It is a string provided in the following format:
+     *                     numberOfBottles; // is the number of bottles in problem
+     *                     bottleCapacity; // is the maximum number of layer each bottle can take
+     *                     .
+     *                     .
+     *                     .
+     *                     color_n_1, color_n_2,...,color_n_k
+     * @param strategy     - A string indicating the search strategy to be applied
+     *                     * BF for breadth-first search
+     *                     * DF for depth-first search
+     *                     * ID for iterative deepening search
+     *                     * UC for uniform cost search
+     *                     * GRi for greedy search, with i in {1, 2} distinguishing the two heuristics.
+     *                     * ASi for A* search with i in {1, 2} distinguishing the two heuristics.
+     * @param visualize    - A boolean parameter which, when set to true, results in your program's side-effecting displaying
+     *                     the state information as it undergoes the different steps of the discovered solution (if one was discovered).
      * @return String representing the sequence of actions to perform (example: plan;pathCost;nodesExpanded)
      */
     public static String solve(String initialState, String strategy, boolean visualize) {
@@ -36,7 +37,7 @@ public class WaterSortSearch extends GenericSearch {
         WaterSearchState parsedInitialState = parseState(initialState);
 
         // Step 2: Define the water search problem
-        waterSearchProblem = new Problem(parsedInitialState, new String[] { "pour" }) {
+        waterSearchProblem = new Problem(parsedInitialState, new String[]{"pour"}) {
             @Override
             public State transitionFunction(State state, String operator) {
                 // Copy the status of the initial state
@@ -72,7 +73,19 @@ public class WaterSortSearch extends GenericSearch {
                     }
                 }
 
+
                 return listOfPossibleNextNodes;
+            }
+
+            @Override
+            public int heuristicCost(State state) {
+                if (strategy.equals("GR1") || strategy.equals("AS1")) {
+                    return calculateHeuristicCost1((WaterSearchState) state);
+                }
+                else if (strategy.equals("GR2") || strategy.equals("AS2")) {
+                    return calculateHeuristicCost2((WaterSearchState) state);
+                }
+                return -1;
             }
         };
 
@@ -85,11 +98,12 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Create a new node from pouring from the ith tube into the jth tube and add it to the listOfPossibleNextNodes
-     * @param node the parent node
-     * @param problem instance of the class (problem dependent)
+     *
+     * @param node                    the parent node
+     * @param problem                 instance of the class (problem dependent)
      * @param listOfPossibleNextNodes list of possible next nodes to visit
-     * @param i the first bottle index
-     * @param j the second bottle index
+     * @param i                       the first bottle index
+     * @param j                       the second bottle index
      */
     private static void enqueueNextPossibleNode(Node node, Problem problem, List<Node> listOfPossibleNextNodes, int i, int j) {
         // calculate cost of pouring from the ith tube into the jth tube.
@@ -111,12 +125,11 @@ public class WaterSortSearch extends GenericSearch {
     }
 
 
-
-
     /**
      * Calculate the cost of pouring from the first bottle into the second bottle.
-     * @param state the current state
-     * @param firstBottleIndex index of the first bottle (zero-based)
+     *
+     * @param state             the current state
+     * @param firstBottleIndex  index of the first bottle (zero-based)
      * @param secondBottleIndex index of the second bottle (zero-based)
      * @return integer which is the cost of pouring from firstBottleIndex to secondBottleIndex
      */
@@ -140,8 +153,7 @@ public class WaterSortSearch extends GenericSearch {
 
                 if (state.arrayOfTubes[firstBottleIndex][i] == colorOfTopLayer) {
                     numOfConsecutiveTopLayers++;
-                }
-                else {
+                } else {
                     break;
                 }
             }
@@ -157,8 +169,9 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Check whether the first bottle can be poured into the second bottle.
-     * @param state the current state
-     * @param firstBottleIndex index of the first bottle (zero-based)
+     *
+     * @param state             the current state
+     * @param firstBottleIndex  index of the first bottle (zero-based)
      * @param secondBottleIndex index of the second bottle (zero-based)
      * @return boolean that determines whether we can pour from firstBottleIndex to secondBottleIndex
      */
@@ -168,7 +181,7 @@ public class WaterSortSearch extends GenericSearch {
         char secondBottleTopColor = state.arrayOfTopPointers[secondBottleIndex] != -1 ? state.arrayOfTubes[secondBottleIndex][state.arrayOfTopPointers[secondBottleIndex]] : 'e';
 
         // check whether the two different tubes contains the same top color & first bottle is not empty
-        return (secondBottleTopColor == 'e' || firstBottleTopColor == secondBottleTopColor)  && firstBottleTopColor != 'e' && firstBottleIndex != secondBottleIndex && state.arrayOfTopPointers[secondBottleIndex] != 0;
+        return (secondBottleTopColor == 'e' || firstBottleTopColor == secondBottleTopColor) && firstBottleTopColor != 'e' && firstBottleIndex != secondBottleIndex && state.arrayOfTopPointers[secondBottleIndex] != 0;
     }
 
 
@@ -180,6 +193,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Parse the initial state into an array of arrays of characters
+     *
      * @param initialState - the state that needs to be parsed
      * @return State object
      */
@@ -213,6 +227,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Construct a solution by traversing back to the parent node till reaching root node (Path to goal)
+     *
      * @param goalNode the goal node reached
      * @return string representing the path of operations performed
      */
@@ -220,11 +235,10 @@ public class WaterSortSearch extends GenericSearch {
         Node node = goalNode;
         StringBuilder operations = new StringBuilder();
 
-        while(node.parent != null) {
+        while (node.parent != null) {
             if (operations.isEmpty()) {
                 operations.insert(0, node.operator);
-            }
-            else {
+            } else {
                 operations.insert(0, node.operator + ",");
             }
             node = node.parent;
@@ -235,7 +249,8 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Perform the operation on the state
-     * @param state the parent state to get the next state from it
+     *
+     * @param state     the parent state to get the next state from it
      * @param operation a string that represent the operation performed (example: pour_firstBottleIndex_secondBottleIndex)
      */
     public static void pour(WaterSearchState state, String operation) {
@@ -278,6 +293,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Check whether a state is a goal state
+     *
      * @param state a candidate state
      * @return boolean whether a state is goal or not
      */
@@ -295,8 +311,7 @@ public class WaterSortSearch extends GenericSearch {
                         flag = false;
                     }
                 }
-            }
-            else { // check that whole tube is empty
+            } else { // check that whole tube is empty
                 for (int j = 0; j < state.bottleCapacity; j++) {
                     if (state.arrayOfTubes[i][j] != 'e') {
                         flag = false;
@@ -311,6 +326,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Calculate the sum of the number of layers remaining for each tube to pour
+     *
      * @param state the state for which to calculate its heuristic value
      * @return an integer represent the heuristic cost of the state
      */
@@ -334,8 +350,7 @@ public class WaterSortSearch extends GenericSearch {
                 if (!flag && bottomLayerColor != state.arrayOfTubes[i][j] && state.arrayOfTubes[i][j] != 'e') {
                     flag = true;
                     heuristicCost++;
-                }
-                else if (flag && state.arrayOfTubes[i][j] != 'e') {
+                } else if (flag && state.arrayOfTubes[i][j] != 'e') {
                     heuristicCost++;
                 }
 
@@ -346,4 +361,5 @@ public class WaterSortSearch extends GenericSearch {
         return heuristicCost;
     }
 
+    public static int calculateHeuristicCost2(WaterSearchState state){return -1;}
 }
