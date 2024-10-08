@@ -11,24 +11,23 @@ public class WaterSortSearch extends GenericSearch {
     /**
      * Solves problem using given strategy
      * Parse the initial state into an array of arrays of characters
-     *
      * @param initialState - A provided string that defines the parameters of the instance of the problem. It gives the initial context of each bottle.
-     *                     It is a string provided in the following format:
-     *                     numberOfBottles; // is the number of bottles in problem
-     *                     bottleCapacity; // is the maximum number of layer each bottle can take
-     *                     .
-     *                     .
-     *                     .
-     *                     color_n_1, color_n_2,...,color_n_k
-     * @param strategy     - A string indicating the search strategy to be applied
-     *                     * BF for breadth-first search
-     *                     * DF for depth-first search
-     *                     * ID for iterative deepening search
-     *                     * UC for uniform cost search
-     *                     * GRi for greedy search, with i in {1, 2} distinguishing the two heuristics.
-     *                     * ASi for A* search with i in {1, 2} distinguishing the two heuristics.
-     * @param visualize    - A boolean parameter which, when set to true, results in your program's side-effecting displaying
-     *                     the state information as it undergoes the different steps of the discovered solution (if one was discovered).
+     *                       It is a string provided in the following format:
+     *                          numberOfBottles; // is the number of bottles in problem
+     *                          bottleCapacity; // is the maximum number of layer each bottle can take
+     *                          .
+     *                          .
+     *                          .
+     *                          color_n_1, color_n_2,...,color_n_k
+     * @param strategy - A string indicating the search strategy to be applied
+     *                 * BF for breadth-first search
+     *                 * DF for depth-first search
+     *                 * ID for iterative deepening search
+     *                 * UC for uniform cost search
+     *                 * GRi for greedy search, with i in {1, 2} distinguishing the two heuristics.
+     *                 * ASi for A* search with i in {1, 2} distinguishing the two heuristics.
+     * @param visualize - A boolean parameter which, when set to true, results in your program's side-effecting displaying
+     *                  the state information as it undergoes the different steps of the discovered solution (if one was discovered).
      * @return String representing the sequence of actions to perform (example: plan;pathCost;nodesExpanded)
      */
     public static String solve(String initialState, String strategy, boolean visualize) {
@@ -65,7 +64,6 @@ public class WaterSortSearch extends GenericSearch {
             public List<Node> expand(Node node) {
                 WaterSearchState parentState = (WaterSearchState) node.state;
                 List<Node> listOfPossibleNextNodes = new ArrayList<>();
-                int help = 78787;
 
                 for (int i = 0; i < parentState.numOfBottles; i++) {
                     for (int j = 0; j < parentState.numOfBottles; j++) {
@@ -195,7 +193,6 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Parse the initial state into an array of arrays of characters
-     *
      * @param initialState - the state that needs to be parsed
      * @return State object
      */
@@ -229,7 +226,6 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Construct a solution by traversing back to the parent node till reaching root node (Path to goal)
-     *
      * @param goalNode the goal node reached
      * @return string representing the path of operations performed
      */
@@ -260,8 +256,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Perform the operation on the state
-     *
-     * @param state     the parent state to get the next state from it
+     * @param state the parent state to get the next state from it
      * @param operation a string that represent the operation performed (example: pour_firstBottleIndex_secondBottleIndex)
      */
     public static void pour(WaterSearchState state, String operation) {
@@ -304,7 +299,6 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Check whether a state is a goal state
-     *
      * @param state a candidate state
      * @return boolean whether a state is goal or not
      */
@@ -337,7 +331,6 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Calculate the sum of the number of layers remaining for each tube to pour
-     *
      * @param state the state for which to calculate its heuristic value
      * @return an integer represent the heuristic cost of the state
      */
@@ -372,5 +365,512 @@ public class WaterSortSearch extends GenericSearch {
         return heuristicCost;
     }
 
-    public static int calculateHeuristicCost2(WaterSearchState state){return -1;}
+    /**
+     * Calculate the number of swaps needed to reach a goal
+     * @param state the state for which to calculate its heuristic value
+     * @return an integer represent the heuristic cost of the state
+     */
+    public static int calculateHeuristicCost2(WaterSearchState state) {
+
+        // an array that represents the label of each bottle in the problem and the number of occurrence of the color label in the bottle
+        Pair<Character, Integer>[] arrayOfColoredLabels = new Pair[state.numOfBottles];
+
+        // initialize the arrayOfColoredLabels
+        for (int i = 0; i < state.numOfBottles; i++) {
+            arrayOfColoredLabels[i] = new Pair<>('e', 0);
+        }
+
+        // a hashmap that keep track the list of bottles assigned to each color which is the key in the hashmap and the number of occurrence of the color in the bottle
+        HashMap<Character, List<Pair<Integer, Integer>>> colorLabelToListOfIndexMap = new HashMap<>();
+
+        // a list where its index represents the bottle index and containing a hashmap for every bottle to store the number of occurrence of each color in the bottle
+        List<HashMap<Character, Integer>> listOfBottlesWithNumberOfOccurrenceOfEachColor = new ArrayList<>();
+
+        // a hashmap that keep track the count of occurrence of each color in the problem
+        HashMap<Character, Integer> colorToColorCountMap = new HashMap<>();
+
+        // a hashset that keep tract of the distinct colors in the problem
+        HashSet<Character> distinctColorsSet = new HashSet<>();
+
+        int totalNumberOfDistinctColors = 0; // number of distinct colors in the problem
+        int numberOfBottlesNeeded = 0; // total number of bottles needed
+
+        /// Step 1: Set the color of each bottle based on the largest occurrence of a colored layer in the bottle
+
+        // traverse over the list of bottles
+        for (int i = 0; i < state.numOfBottles; i++) {
+
+            // add a new hashmap to the list of bottles that count number of occurrence of each color in the bottle
+            listOfBottlesWithNumberOfOccurrenceOfEachColor.add(i, new HashMap<>());
+
+            // traverse over the number of layers per bottles
+            for (int j = 0; j < state.bottleCapacity; j++) {
+
+                // if the colorToColorCountMap has color of the current layer as a key then increment count
+                if (colorToColorCountMap.containsKey(state.arrayOfTubes[i][j])) {
+                    colorToColorCountMap.put(state.arrayOfTubes[i][j], colorToColorCountMap.get(state.arrayOfTubes[i][j]) + 1);
+                } else {
+                    // if the colorToColorCountMap does not have the color of the current layer as a key
+                    // then set a new key value pair with the new color and number of occurrence to 1
+                    if (state.arrayOfTubes[i][j] != 'e') {
+                        colorToColorCountMap.put(state.arrayOfTubes[i][j], 1);
+                        distinctColorsSet.add(state.arrayOfTubes[i][j]);
+
+                        // increment total number of total distinct colors
+                        totalNumberOfDistinctColors++;
+                    }
+                }
+
+                // add the number of occurrence of each color in the bottle to its hashmap
+                if (listOfBottlesWithNumberOfOccurrenceOfEachColor.get(i).containsKey(state.arrayOfTubes[i][j])) {
+                    listOfBottlesWithNumberOfOccurrenceOfEachColor.get(i).put(state.arrayOfTubes[i][j], listOfBottlesWithNumberOfOccurrenceOfEachColor.get(i).get(state.arrayOfTubes[i][j]) + 1);
+                }
+                else {
+                    listOfBottlesWithNumberOfOccurrenceOfEachColor.get(i).put(state.arrayOfTubes[i][j], 1);
+                }
+            }
+        }
+
+        /// Step 2: Calculate the number of bottles required for each color
+        for (Map.Entry<Character, Integer> mapElement : colorToColorCountMap.entrySet()) {
+            Integer numOfColorOccurrence = mapElement.getValue();
+            numberOfBottlesNeeded += (int) Math.ceil((double)(numOfColorOccurrence/state.numOfBottles));
+        }
+
+        /// Step 3: Calculate the number of remaining bottles
+        int totalNumberOfRemainingBottles = state.numOfBottles - numberOfBottlesNeeded;
+
+        /// Step 4: Assign each bottle a colored label
+        // traverse over the list of bottles
+        for (int i = 0; i < state.numOfBottles; i++) {
+            // if the bottle is empty then we assign it a label "$" which indicates none
+            if (state.arrayOfTopPointers[i] == -1) {
+                arrayOfColoredLabels[i].first = '$';
+                arrayOfColoredLabels[i].second = 0;
+            }
+            else {
+                // initialize the color of the bottom layer as the color with maximum occurrences at the beginning.
+                char colorWithMaximumOccurrences = state.arrayOfTubes[i][state.bottleCapacity - 1];
+
+                // initially the color with maximum occurrence has an occurrence of 1
+                int countOfNumberOfOccurrences = 1;
+
+                // initialize a hashmap of colors to their counts in the bottle
+                HashMap<Character, Integer> colorToColorCountPerBottleMap = new HashMap<>();
+
+                // search for the colored layer with the largest number of occurrence in the bottle
+                // Or, if the bottles contains equal distribution of all colors in it. Then,
+                // we would assign it a label with the same color as their bottom layer
+                for (int j = 0; j < state.bottleCapacity; j++) {
+                    // if colorToColorCountPerBottleMap contains the color then increment the value by 1
+                    if (colorToColorCountPerBottleMap.containsKey(state.arrayOfTubes[i][j])) {
+                        colorToColorCountPerBottleMap.put(state.arrayOfTubes[i][j], colorToColorCountPerBottleMap.get(state.arrayOfTubes[i][j]) + 1);
+                    } else { // otherwise, set the count of the color to 1
+                        colorToColorCountPerBottleMap.put(state.arrayOfTubes[i][j], 1);
+                    }
+
+                    // if the count of a color in colorToColorCountPerBottleMap is greater than the current maximum count of number of occurrence
+                    // then update the colorWithMaximumOccurrences and colorWithMaximumOccurrences update to the new color
+                    if (colorToColorCountPerBottleMap.get(state.arrayOfTubes[i][j]) > countOfNumberOfOccurrences) {
+                        colorWithMaximumOccurrences = state.arrayOfTubes[i][j];
+                        countOfNumberOfOccurrences = colorToColorCountPerBottleMap.get(state.arrayOfTubes[i][j]);
+                    }
+                }
+
+                // if the number of occurrence of the bottom layer same as the number of occurrence of largest frequent color
+                // we set the label of the bottle with color of the bottom layer as usually the bottom layers does not move much in pouring problem
+                if (colorToColorCountPerBottleMap.get(state.arrayOfTubes[i][state.bottleCapacity - 1]) == countOfNumberOfOccurrences) {
+                    arrayOfColoredLabels[i].first = state.arrayOfTubes[i][state.bottleCapacity - 1];
+                    arrayOfColoredLabels[i].second = countOfNumberOfOccurrences;
+
+                    // update the list of bottles mapped with the current color in colorWithMaximumOccurrences hashmap
+                    if (colorLabelToListOfIndexMap.get(state.arrayOfTubes[i][state.bottleCapacity - 1]) == null) {
+                        colorLabelToListOfIndexMap.put(state.arrayOfTubes[i][state.bottleCapacity - 1], new ArrayList<>());
+                    }
+
+                    colorLabelToListOfIndexMap.get(state.arrayOfTubes[i][state.bottleCapacity - 1]).add(new Pair<>(i, countOfNumberOfOccurrences));
+
+                }
+                else {
+                    arrayOfColoredLabels[i].first = colorWithMaximumOccurrences;
+                    arrayOfColoredLabels[i].second = countOfNumberOfOccurrences;
+
+                    // update the list of bottles mapped with the current color in colorWithMaximumOccurrences hashmap
+                    if (colorLabelToListOfIndexMap.get(colorWithMaximumOccurrences) == null) {
+                        colorLabelToListOfIndexMap.put(colorWithMaximumOccurrences, new ArrayList<>());
+                    }
+
+                    colorLabelToListOfIndexMap.get(colorWithMaximumOccurrences).add(new Pair<>(i, countOfNumberOfOccurrences));
+                }
+            }
+        }
+
+        /// Step 5: check if there does not exist a color that need a bottle to be assigned to them
+
+        // a hashmap that map each color the number of bottles it needs
+        HashMap<Character, Integer> colorsToCountOfBottlesNeededMap = new HashMap<>();
+
+        // a hashmap that map each color to the number of excess bottles it has
+        HashMap<Character, Integer> colorsToCountOfExcessBottlesMap = new HashMap<>();
+
+        // for every color count the number of remaining number of bottles needed to be assigned to them
+        for (Map.Entry<Character, Integer> mapElement : colorToColorCountMap.entrySet()) {
+            Character currentColor = mapElement.getKey();
+            Integer numOfColorOccurrence = mapElement.getValue();
+
+            numberOfBottlesNeeded += (int) Math.ceil((double)(numOfColorOccurrence/state.numOfBottles));
+//            System.out.println("Current Color: " + currentColor);
+            int numberOfColorsAssignedToCurrentColor = colorLabelToListOfIndexMap.get(currentColor) != null ? colorLabelToListOfIndexMap.get(currentColor).size() : 0;
+            int remainingNumberOfBottlesNeedForCurrentColor = numberOfBottlesNeeded - numberOfColorsAssignedToCurrentColor;
+
+            if (remainingNumberOfBottlesNeedForCurrentColor > 0) {
+                colorsToCountOfBottlesNeededMap.put(currentColor, remainingNumberOfBottlesNeedForCurrentColor);
+            }
+            else if (remainingNumberOfBottlesNeedForCurrentColor < 0) {
+                colorsToCountOfExcessBottlesMap.put(currentColor, Math.abs(remainingNumberOfBottlesNeedForCurrentColor));
+            }
+        }
+
+        // get the list of bottles that are excess
+        HashSet<Integer> setOfExcessBottlesIndex = new HashSet<>();
+
+        // traverse over the set of distinct colors
+        for (Character color : distinctColorsSet) {
+
+            // check whether the current color contains excess number of bottles than needed
+            if (colorsToCountOfExcessBottlesMap.containsKey(color)) {
+
+                // get the list of bottle indices that labelled with the current color and the number of occurrence of that color
+                List<Pair<Integer, Integer>> listOfBottleIndexMapToCount = colorLabelToListOfIndexMap.get(color);
+
+                // get the number of excess bottles for the color
+                int numberOfExcessBottles = colorsToCountOfExcessBottlesMap.get(color);
+
+                // sort the list ascending order based on the number of occurrence so that the excess contains the least number of occurrence of the color
+                listOfBottleIndexMapToCount.sort((o1, o2) -> o1.second - o2.second);
+
+                // add all excess bottles to setOfExcessBottlesIndex
+                while (numberOfExcessBottles > 0) {
+
+                    int bottleIndex = listOfBottleIndexMapToCount.removeFirst().first;
+                    setOfExcessBottlesIndex.add(bottleIndex);
+
+                    numberOfExcessBottles--;
+                }
+
+                // remove the color from the hashmap as it currently contains exactly the number of bottles it needs
+                colorsToCountOfExcessBottlesMap.remove(color);
+            }
+
+        }
+
+        // a variable representing the current bottle index that will be used later on
+        int bottleIndex = 0;
+
+        // a list that stores the indices of bottles that are excess or empty bottles and count of layers within bottle
+        List<Pair<Integer, Integer>> listOfExcessBottleIndex = new LinkedList<>();
+
+        // traverse over the list of bottles
+        for (HashMap<Character, Integer> bottle : listOfBottlesWithNumberOfOccurrenceOfEachColor) {
+
+            // if the bottles is empty then store it in the queue
+            if (state.arrayOfTopPointers[bottleIndex] == -1) {
+                listOfExcessBottleIndex.add(new Pair<>(bottleIndex++, 0));
+                continue;
+            }
+
+            // if the current bottle is included in the set of excess bottle index.
+            // Hence, we can change its color label.
+            if (setOfExcessBottlesIndex.contains(bottleIndex)) {
+
+                // store the values in the hashmap in a list
+                List<Pair<Character, Integer>> listOfNumberOfOccurrenceOfEachColor = new ArrayList<>();
+                for(Map.Entry<Character, Integer> mapElement : bottle.entrySet()) {
+                    Character currentColor = mapElement.getKey();
+                    Integer numOfColorOccurrence = mapElement.getValue();
+                    listOfNumberOfOccurrenceOfEachColor.add(new Pair<>(currentColor, numOfColorOccurrence));
+                }
+
+                // sort the list descending order
+                listOfNumberOfOccurrenceOfEachColor.sort((o1, o2) -> o2.second - o1.second);
+
+                // a flag that represents whether the bottle is assigned to any bottle
+                boolean flag = false;
+
+                // for every color in the bottle
+                for (Pair<Character, Integer> colorElement : listOfNumberOfOccurrenceOfEachColor) {
+                    //  check if the color needs a bottle as its label
+                    if (colorsToCountOfBottlesNeededMap.containsKey(colorElement.first)) {
+                        // set the flag to true since the bottle is assigned a new label
+                        flag = true;
+
+                        // assign the label of the bottle to the color
+                        arrayOfColoredLabels[bottleIndex].first = colorElement.first;
+                        arrayOfColoredLabels[bottleIndex].second = colorElement.second;
+
+                        // remove bottle index from setOfExcessBottlesIndex as it have an assigned label
+                        setOfExcessBottlesIndex.remove(bottleIndex);
+
+                        // reduce count of the needed bottle for the color in colorsToCountOfBottlesNeededMap
+                        colorsToCountOfBottlesNeededMap.put(colorElement.first, colorsToCountOfBottlesNeededMap.get(colorElement.first) - 1);
+
+                        if (colorsToCountOfBottlesNeededMap.get(colorElement.first) == 0) {
+                            colorsToCountOfBottlesNeededMap.remove(colorElement.first);
+                        }
+                    }
+                }
+
+                // if the bottle is not assigned to any color
+                if (!flag) {
+                    listOfExcessBottleIndex.add(new Pair(bottleIndex, state.arrayOfTopPointers[bottleIndex] + 1));
+                }
+            }
+
+            bottleIndex++;
+        }
+
+        // for the remaining bottles that are not assigned and empty bottles
+        // we want to assign the empty bottles labels with colors that contains the minimum number of color occurrence
+        // we need to calculate the remaining number of colored layers for colors that need bottles
+        List<Pair<Character, Integer>> listOfColorsWithRemaining = new ArrayList<>();
+
+        for (Map.Entry<Character, Integer> mapEntry : colorsToCountOfBottlesNeededMap.entrySet()) {
+
+            Character currentColor = mapEntry.getKey();
+            int numberOfBottlesAssignedToColor = colorLabelToListOfIndexMap.get(currentColor).size();
+            int numberOfOccurrencesOfColorInProblem = colorToColorCountMap.get(currentColor);
+            int numberOfRemainingColors = numberOfOccurrencesOfColorInProblem - numberOfBottlesAssignedToColor * state.bottleCapacity;
+
+            if (numberOfRemainingColors > 0) {
+                listOfColorsWithRemaining.add(new Pair<>(currentColor, numberOfRemainingColors));
+            }
+        }
+
+        // sort the lists ascending order
+        listOfColorsWithRemaining.sort((o1, o2) -> o1.second - o2.second);
+        listOfExcessBottleIndex.sort((o1, o2) -> o1.second - o2.second);
+
+        // for bottles that are empty or would be assigned labelled color different from the colors in them
+        for (Pair<Character, Integer> colorElement : listOfColorsWithRemaining) {
+
+            int numberOfBottlesNeededPerColor = colorsToCountOfBottlesNeededMap.get(colorElement.first);
+
+            while (numberOfBottlesNeededPerColor > 0) {
+                for (Pair<Integer, Integer> bottle : listOfExcessBottleIndex) {
+                    if (setOfExcessBottlesIndex.contains(bottle.first)) {
+                        arrayOfColoredLabels[bottle.first].first = colorElement.first;
+                        arrayOfColoredLabels[bottle.first].second = 0;
+                        setOfExcessBottlesIndex.remove(bottle.first);
+                        numberOfBottlesNeededPerColor--;
+                    }
+                }
+            }
+        }
+
+        /// Step 6: Swap layers
+        // copy the array of tubes from the state
+        char[][] copiedArrayOfTubes = new char[state.arrayOfTubes.length][];
+        for (int i = 0; i < state.arrayOfTubes.length; i++) {
+            copiedArrayOfTubes[i] = state.arrayOfTubes[i].clone();
+        }
+        // create an array that contains the count of the number colored layers in every bottle
+        int[] arrayOfNumberOfColoredLayers = new int[state.numOfBottles];
+
+        // a variable that keep track of the total number of swaps
+        int totalNumberOfSwaps = 0;
+
+        // get the count of the number of colored layers in every bottle
+        for (int i = 0; i < state.arrayOfTopPointers.length; i++) {
+            arrayOfNumberOfColoredLayers[i] = state.arrayOfTopPointers[i] + 1;
+        }
+
+        // traverse over the array ot bottles
+        for (int i = 0; i < copiedArrayOfTubes.length; i++) {
+            // get the color label of the current bottle
+            char label = arrayOfColoredLabels[i].first;
+
+            // traverse over the layers in the current bottle
+            for (int j = 0; j < copiedArrayOfTubes[i].length; j++) {
+
+                // a flag that checks whether the colored layer is swapped
+                boolean isSwapped = false;
+
+                // if the colored layer have the same color as the color of the bottle then do not do anything
+                if (copiedArrayOfTubes[i][j] == label) {
+                    continue;
+                }
+                else if (copiedArrayOfTubes[i][j] != 'e') { // if the colored layer is not empty and have a different color than the label of the bottle
+                    /** Step 6.1:
+                     *  we want to make as minimum number of swaps as possible so we will prioritize swaps
+                     *  that would relocate two color layers in their target bottle
+                     */
+                    for (int k = 0; k < copiedArrayOfTubes.length; k++) {
+                        if (i == k) continue; // do not swap two colored layers from the same bottle
+                        else if (arrayOfColoredLabels[i].first == arrayOfColoredLabels[k].first) continue; // do not swap two colored layers from two bottles of the same label
+                        else if (copiedArrayOfTubes[i][j] == arrayOfColoredLabels[k].first) { // swap the colored layer with a layer from a bottle with a label of the same color
+                            for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
+                                if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first || copiedArrayOfTubes[k][l] == 'e') {
+                                    continue;
+                                }
+                                else if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[i].first) {
+                                    // swap the layer
+                                    char tmp = copiedArrayOfTubes[k][l];
+                                    copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
+                                    copiedArrayOfTubes[i][j] = tmp;
+                                    isSwapped = true;
+                                    totalNumberOfSwaps++;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // if the layers is swapped is stop
+                        if (isSwapped) {
+                            break;
+                        }
+                    }
+
+                    // if the layer is swapped then we continue to the rest of layers
+                    if (isSwapped) {
+                        continue;
+                    }
+
+                    /** Step 6.2:
+                     *  if the colored layer is not swapped then we will swap it
+                     *  from any other colored layer that is not y from y labelled bottle that is not empty
+                     */
+                    for (int k = 0; k < copiedArrayOfTubes.length; k++) {
+                        if (i == k) continue;
+                        else if (arrayOfColoredLabels[i].first == arrayOfColoredLabels[k].first) continue;
+                        else if (arrayOfNumberOfColoredLayers[k] != 0) {
+                            for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
+                                if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first || copiedArrayOfTubes[k][l] == 'e') {
+                                    continue;
+                                }
+                                else if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[i].first) {
+                                    // swap the layers
+                                    char tmp = copiedArrayOfTubes[k][l];
+                                    copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
+                                    copiedArrayOfTubes[i][j] = tmp;
+                                    isSwapped = true;
+                                    totalNumberOfSwaps++;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // if the layers is swapped then stop
+                        if (isSwapped) {
+                            break;
+                        }
+                    }
+
+                    // if the layer is swapped then we continue to the rest of layers
+                    if (isSwapped) {
+                        continue;
+                    }
+
+                    /** Step 6.3:
+                     *  if the colored layer is not swapped then we will swap it
+                     *  with an empty layer from one of the bottles that have it as it's label
+                     */
+                    for (int k = 0; k < copiedArrayOfTubes.length; k++) {
+                        if (i == k) continue;
+                        else if (arrayOfColoredLabels[i].first == arrayOfColoredLabels[k].first) continue;
+                        else if (arrayOfColoredLabels[k].first == copiedArrayOfTubes[i][j]) {
+                            for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
+                                if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first) {
+                                    continue;
+                                }
+                                else if (copiedArrayOfTubes[k][l] == 'e') {
+                                    // swap the layers
+                                    char tmp = copiedArrayOfTubes[k][l];
+                                    copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
+                                    copiedArrayOfTubes[i][j] = tmp;
+                                    isSwapped = true;
+                                    totalNumberOfSwaps++;
+                                    arrayOfNumberOfColoredLayers[k]++;
+                                    arrayOfNumberOfColoredLayers[i]--;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // if the layers is swapped then stop
+                        if (isSwapped) {
+                            break;
+                        }
+                    }
+
+                    // if the layer is swapped then we continue to the rest of layers
+                    if(isSwapped) {
+                        continue;
+                    }
+
+                    /** Step 6.4:
+                     *  if the colored layer is not swapped then we will swap it
+                     *  with an empty layer from any of the bottles
+                     */
+                    for (int k = 0; k < copiedArrayOfTubes.length; k++) {
+                        if (i == k) continue;
+                        else if (arrayOfColoredLabels[i].first == arrayOfColoredLabels[k].first) continue;
+                        else {
+
+                            for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
+                                if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first) {
+                                    continue;
+                                }
+                                else if (copiedArrayOfTubes[k][l] == 'e') {
+                                    // swap the layers
+                                    char tmp = copiedArrayOfTubes[k][l];
+                                    copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
+                                    copiedArrayOfTubes[i][j] = tmp;
+                                    isSwapped = true;
+                                    totalNumberOfSwaps++;
+                                    arrayOfNumberOfColoredLayers[k]++;
+                                    arrayOfNumberOfColoredLayers[i]--;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // if the layers is swapped then stop
+                        if (isSwapped) {
+                            break;
+                        }
+                    }
+                }
+                else if (copiedArrayOfTubes[i][j] == 'e') { // swap an empty layer with any of the colored layers with same color as the label of the bottle
+
+                    for (int k = 0; k < copiedArrayOfTubes.length; k++) {
+                        if (i == k) continue; // do not swap two colored layers from the same bottle
+                        else if (arrayOfColoredLabels[i].first == arrayOfColoredLabels[k].first) continue;
+                        else {
+                            for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
+                                if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first || copiedArrayOfTubes[k][l] == 'e') {
+                                    continue;
+                                }
+                                else if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[i].first) {
+                                    // swap the layer
+                                    char tmp = copiedArrayOfTubes[k][l];
+                                    copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
+                                    copiedArrayOfTubes[i][j] = tmp;
+                                    isSwapped = true;
+                                    totalNumberOfSwaps++;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // if the layers is swapped then stop
+                        if (isSwapped) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return totalNumberOfSwaps;
+    }
 }

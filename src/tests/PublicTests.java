@@ -447,7 +447,7 @@ class Checker{
         if (solution.equals("nosolution")) {
             return false;
         }
-//        System.out.println(solution);
+        System.out.println(solution);
         String[] y  = solution.split(";");
         String z = y[0];
         int _a = Integer.parseInt(y[1]);
