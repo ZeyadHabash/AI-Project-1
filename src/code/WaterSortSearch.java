@@ -120,6 +120,7 @@ public class WaterSortSearch extends GenericSearch {
                     node.pathCost + costOfPourFromSecondToFirst,
                     node.depth + 1
             );
+            childNode.setHeuristicCost(problem.heuristicCost(childNode.state));
             listOfPossibleNextNodes.add(childNode);
         }
     }
@@ -234,6 +235,11 @@ public class WaterSortSearch extends GenericSearch {
     public static String constructSolution(Node goalNode) {
         Node node = goalNode;
         StringBuilder operations = new StringBuilder();
+
+        // Printing cost of reached goal
+        operations.insert(0, "Path Cost: " + node.pathCost + "\n");
+        // Verifies centering property
+        operations.insert(0, "\nHeuristic Cost: " + node.heuristicCost + "\n");
 
         while (node.parent != null) {
             if (operations.isEmpty()) {

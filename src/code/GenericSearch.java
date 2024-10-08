@@ -87,9 +87,7 @@ public class GenericSearch {
         while (true) {
             if (queue.isEmpty()) return null;
 
-//            System.out.println("Queue: " + queue);
             Node node = queue.dequeue();
-
 
             if(problem.goalTest(node.state)) {
                 System.out.println(ConsoleColors.RED_BOLD + "Goal State: " + ConsoleColors.RESET + node.state);
@@ -97,13 +95,13 @@ public class GenericSearch {
             }
 
             System.out.println(ConsoleColors.RED_BOLD + "Current State: " + ConsoleColors.RESET + node.state);
-            // TODO: enqueue next nodes in line
-            // TODO: handle gr1 and as1 to GR and AS
-            switch (strategy) {
+
+//            queue.enqueue(strategy.substring(0,2), problem.expand(node));
+            switch (strategy.substring(0,2)) {
                 case "GR" : case "AS":
                     node.setHeuristicCost(problem.heuristicCost(node.state));
                 case "DF": case "BF": case "UC":
-                    queue.enqueue(strategy, problem.expand(node));
+                    queue.enqueue(strategy.substring(0,2), problem.expand(node));
             }
         }
     }
