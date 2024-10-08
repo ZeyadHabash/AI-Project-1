@@ -499,7 +499,8 @@ public class WaterSortSearch extends GenericSearch {
             Integer numOfColorOccurrence = mapElement.getValue();
 
             numberOfBottlesNeeded += (int) Math.ceil((double)(numOfColorOccurrence/state.numOfBottles));
-            int numberOfColorsAssignedToCurrentColor = colorLabelToListOfIndexMap.get(currentColor).size();
+            System.out.println("Current Color: " + currentColor);
+            int numberOfColorsAssignedToCurrentColor = colorLabelToListOfIndexMap.get(currentColor) != null ? colorLabelToListOfIndexMap.get(currentColor).size() : 0;
             int remainingNumberOfBottlesNeedForCurrentColor = numberOfBottlesNeeded - numberOfColorsAssignedToCurrentColor;
 
             if (remainingNumberOfBottlesNeedForCurrentColor > 0) {
