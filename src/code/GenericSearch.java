@@ -7,6 +7,7 @@ public class GenericSearch {
 
     /**
      * Calculate the cost of pouring from the first bottle into the second bottle.
+     *
      * @param root the current state
      * @return a queue
      */
@@ -21,6 +22,7 @@ public class GenericSearch {
 
     /**
      * Calculate the cost of pouring from the first bottle into the second bottle.
+     *
      * @param initialState the current state
      * @return a root node
      */
@@ -37,6 +39,7 @@ public class GenericSearch {
 
     /**
      * Loops over different values of Depth to perform iterative deepening
+     *
      * @param problem general search problem
      */
     private static Node iterativeDeepeningSearch(Problem problem) {
@@ -53,8 +56,9 @@ public class GenericSearch {
 
     /**
      * Performs DFS with a limited depth (Helper method to iterativeDeepeningSearch)
-     * @param queue for node exploration
-     * @param problem general search problem
+     *
+     * @param queue      for node exploration
+     * @param problem    general search problem
      * @param depthLimit of DFS
      * @return a goal node
      */
@@ -64,7 +68,7 @@ public class GenericSearch {
             System.out.println("Current State: " + node.state + "    depth:" + node.depth + "     limit" + depthLimit);
             if (problem.goalTest(node.state))
                 return node;
-            if (node.depth < depthLimit ) {
+            if (node.depth < depthLimit) {
                 queue.enqueue("ID", problem.expand(node));
             }
         }
@@ -74,7 +78,8 @@ public class GenericSearch {
 
     /**
      * Calculate the cost of pouring from the first bottle into the second bottle.
-     * @param problem general search problem
+     *
+     * @param problem  general search problem
      * @param strategy a strategy to force the queue to follow [DF, BF, ID, UC, GR, AS]
      * @return a goal node
      */
@@ -89,7 +94,7 @@ public class GenericSearch {
 
             Node node = queue.dequeue();
 
-            if(problem.goalTest(node.state)) {
+            if (problem.goalTest(node.state)) {
                 System.out.println(ConsoleColors.RED_BOLD + "Goal State: " + ConsoleColors.RESET + node.state);
                 return node;
             }
@@ -97,15 +102,17 @@ public class GenericSearch {
             System.out.println(ConsoleColors.RED_BOLD + "Current State: " + ConsoleColors.RESET + node.state);
 
 //            queue.enqueue(strategy.substring(0,2), problem.expand(node));
-            switch (strategy.substring(0,2)) {
-                case "GR" : case "AS":
+            switch (strategy.substring(0, 2)) {
+                case "GR":
+                case "AS":
                     node.setHeuristicCost(problem.heuristicCost(node.state));
-                case "DF": case "BF": case "UC":
-                    queue.enqueue(strategy.substring(0,2), problem.expand(node));
+                case "DF":
+                case "BF":
+                case "UC":
+                    queue.enqueue(strategy.substring(0, 2), problem.expand(node));
             }
         }
     }
-
 
 
 //    /**

@@ -53,7 +53,9 @@ public class BaseQueue {
 
                     break;
 
-                case "UC": case "GR": case "AS":
+                case "UC":
+                case "GR":
+                case "AS":
                     for (Node node : nodes) {
                         if (!visitedStates.contains(node.state.toString())) {
                             visitedStates.add(node.state.toString());
@@ -65,9 +67,6 @@ public class BaseQueue {
             }
         }
     }
-
-
-
 
 
     /**

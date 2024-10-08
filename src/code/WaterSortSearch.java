@@ -1,7 +1,7 @@
 package code;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 
 public class WaterSortSearch extends GenericSearch {
 
@@ -11,23 +11,24 @@ public class WaterSortSearch extends GenericSearch {
     /**
      * Solves problem using given strategy
      * Parse the initial state into an array of arrays of characters
+     *
      * @param initialState - A provided string that defines the parameters of the instance of the problem. It gives the initial context of each bottle.
-     *                       It is a string provided in the following format:
-     *                          numberOfBottles; // is the number of bottles in problem
-     *                          bottleCapacity; // is the maximum number of layer each bottle can take
-     *                          .
-     *                          .
-     *                          .
-     *                          color_n_1, color_n_2,...,color_n_k
-     * @param strategy - A string indicating the search strategy to be applied
-     *                 * BF for breadth-first search
-     *                 * DF for depth-first search
-     *                 * ID for iterative deepening search
-     *                 * UC for uniform cost search
-     *                 * GRi for greedy search, with i in {1, 2} distinguishing the two heuristics.
-     *                 * ASi for A* search with i in {1, 2} distinguishing the two heuristics.
-     * @param visualize - A boolean parameter which, when set to true, results in your program's side-effecting displaying
-     *                  the state information as it undergoes the different steps of the discovered solution (if one was discovered).
+     *                     It is a string provided in the following format:
+     *                     numberOfBottles; // is the number of bottles in problem
+     *                     bottleCapacity; // is the maximum number of layer each bottle can take
+     *                     .
+     *                     .
+     *                     .
+     *                     color_n_1, color_n_2,...,color_n_k
+     * @param strategy     - A string indicating the search strategy to be applied
+     *                     * BF for breadth-first search
+     *                     * DF for depth-first search
+     *                     * ID for iterative deepening search
+     *                     * UC for uniform cost search
+     *                     * GRi for greedy search, with i in {1, 2} distinguishing the two heuristics.
+     *                     * ASi for A* search with i in {1, 2} distinguishing the two heuristics.
+     * @param visualize    - A boolean parameter which, when set to true, results in your program's side-effecting displaying
+     *                     the state information as it undergoes the different steps of the discovered solution (if one was discovered).
      * @return String representing the sequence of actions to perform (example: plan;pathCost;nodesExpanded)
      */
     public static String solve(String initialState, String strategy, boolean visualize) {
@@ -80,8 +81,7 @@ public class WaterSortSearch extends GenericSearch {
             public int heuristicCost(State state) {
                 if (strategy.equals("GR1") || strategy.equals("AS1")) {
                     return calculateHeuristicCost1((WaterSearchState) state);
-                }
-                else if (strategy.equals("GR2") || strategy.equals("AS2")) {
+                } else if (strategy.equals("GR2") || strategy.equals("AS2")) {
                     return calculateHeuristicCost2((WaterSearchState) state);
                 }
                 return -1;
@@ -193,6 +193,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Parse the initial state into an array of arrays of characters
+     *
      * @param initialState - the state that needs to be parsed
      * @return State object
      */
@@ -226,6 +227,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Construct a solution by traversing back to the parent node till reaching root node (Path to goal)
+     *
      * @param goalNode the goal node reached
      * @return string representing the path of operations performed
      */
@@ -256,7 +258,8 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Perform the operation on the state
-     * @param state the parent state to get the next state from it
+     *
+     * @param state     the parent state to get the next state from it
      * @param operation a string that represent the operation performed (example: pour_firstBottleIndex_secondBottleIndex)
      */
     public static void pour(WaterSearchState state, String operation) {
@@ -299,6 +302,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Check whether a state is a goal state
+     *
      * @param state a candidate state
      * @return boolean whether a state is goal or not
      */
@@ -331,6 +335,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Calculate the sum of the number of layers remaining for each tube to pour
+     *
      * @param state the state for which to calculate its heuristic value
      * @return an integer represent the heuristic cost of the state
      */
@@ -367,6 +372,7 @@ public class WaterSortSearch extends GenericSearch {
 
     /**
      * Calculate the number of swaps needed to reach a goal
+     *
      * @param state the state for which to calculate its heuristic value
      * @return an integer represent the heuristic cost of the state
      */
@@ -424,8 +430,7 @@ public class WaterSortSearch extends GenericSearch {
                 // add the number of occurrence of each color in the bottle to its hashmap
                 if (listOfBottlesWithNumberOfOccurrenceOfEachColor.get(i).containsKey(state.arrayOfTubes[i][j])) {
                     listOfBottlesWithNumberOfOccurrenceOfEachColor.get(i).put(state.arrayOfTubes[i][j], listOfBottlesWithNumberOfOccurrenceOfEachColor.get(i).get(state.arrayOfTubes[i][j]) + 1);
-                }
-                else {
+                } else {
                     listOfBottlesWithNumberOfOccurrenceOfEachColor.get(i).put(state.arrayOfTubes[i][j], 1);
                 }
             }
@@ -434,7 +439,7 @@ public class WaterSortSearch extends GenericSearch {
         /// Step 2: Calculate the number of bottles required for each color
         for (Map.Entry<Character, Integer> mapElement : colorToColorCountMap.entrySet()) {
             Integer numOfColorOccurrence = mapElement.getValue();
-            numberOfBottlesNeeded += (int) Math.ceil((double)(numOfColorOccurrence/state.numOfBottles));
+            numberOfBottlesNeeded += (int) Math.ceil((double) (numOfColorOccurrence / state.numOfBottles));
         }
 
         /// Step 3: Calculate the number of remaining bottles
@@ -447,8 +452,7 @@ public class WaterSortSearch extends GenericSearch {
             if (state.arrayOfTopPointers[i] == -1) {
                 arrayOfColoredLabels[i].first = '$';
                 arrayOfColoredLabels[i].second = 0;
-            }
-            else {
+            } else {
                 // initialize the color of the bottom layer as the color with maximum occurrences at the beginning.
                 char colorWithMaximumOccurrences = state.arrayOfTubes[i][state.bottleCapacity - 1];
 
@@ -490,8 +494,7 @@ public class WaterSortSearch extends GenericSearch {
 
                     colorLabelToListOfIndexMap.get(state.arrayOfTubes[i][state.bottleCapacity - 1]).add(new Pair<>(i, countOfNumberOfOccurrences));
 
-                }
-                else {
+                } else {
                     arrayOfColoredLabels[i].first = colorWithMaximumOccurrences;
                     arrayOfColoredLabels[i].second = countOfNumberOfOccurrences;
 
@@ -518,15 +521,14 @@ public class WaterSortSearch extends GenericSearch {
             Character currentColor = mapElement.getKey();
             Integer numOfColorOccurrence = mapElement.getValue();
 
-            numberOfBottlesNeeded += (int) Math.ceil((double)(numOfColorOccurrence/state.numOfBottles));
+            numberOfBottlesNeeded += (int) Math.ceil((double) (numOfColorOccurrence / state.numOfBottles));
 //            System.out.println("Current Color: " + currentColor);
             int numberOfColorsAssignedToCurrentColor = colorLabelToListOfIndexMap.get(currentColor) != null ? colorLabelToListOfIndexMap.get(currentColor).size() : 0;
             int remainingNumberOfBottlesNeedForCurrentColor = numberOfBottlesNeeded - numberOfColorsAssignedToCurrentColor;
 
             if (remainingNumberOfBottlesNeedForCurrentColor > 0) {
                 colorsToCountOfBottlesNeededMap.put(currentColor, remainingNumberOfBottlesNeedForCurrentColor);
-            }
-            else if (remainingNumberOfBottlesNeedForCurrentColor < 0) {
+            } else if (remainingNumberOfBottlesNeedForCurrentColor < 0) {
                 colorsToCountOfExcessBottlesMap.put(currentColor, Math.abs(remainingNumberOfBottlesNeedForCurrentColor));
             }
         }
@@ -585,7 +587,7 @@ public class WaterSortSearch extends GenericSearch {
 
                 // store the values in the hashmap in a list
                 List<Pair<Character, Integer>> listOfNumberOfOccurrenceOfEachColor = new ArrayList<>();
-                for(Map.Entry<Character, Integer> mapElement : bottle.entrySet()) {
+                for (Map.Entry<Character, Integer> mapElement : bottle.entrySet()) {
                     Character currentColor = mapElement.getKey();
                     Integer numOfColorOccurrence = mapElement.getValue();
                     listOfNumberOfOccurrenceOfEachColor.add(new Pair<>(currentColor, numOfColorOccurrence));
@@ -698,21 +700,20 @@ public class WaterSortSearch extends GenericSearch {
                 // if the colored layer have the same color as the color of the bottle then do not do anything
                 if (copiedArrayOfTubes[i][j] == label) {
                     continue;
-                }
-                else if (copiedArrayOfTubes[i][j] != 'e') { // if the colored layer is not empty and have a different color than the label of the bottle
+                } else if (copiedArrayOfTubes[i][j] != 'e') { // if the colored layer is not empty and have a different color than the label of the bottle
                     /** Step 6.1:
                      *  we want to make as minimum number of swaps as possible so we will prioritize swaps
                      *  that would relocate two color layers in their target bottle
                      */
                     for (int k = 0; k < copiedArrayOfTubes.length; k++) {
                         if (i == k) continue; // do not swap two colored layers from the same bottle
-                        else if (arrayOfColoredLabels[i].first == arrayOfColoredLabels[k].first) continue; // do not swap two colored layers from two bottles of the same label
+                        else if (arrayOfColoredLabels[i].first == arrayOfColoredLabels[k].first)
+                            continue; // do not swap two colored layers from two bottles of the same label
                         else if (copiedArrayOfTubes[i][j] == arrayOfColoredLabels[k].first) { // swap the colored layer with a layer from a bottle with a label of the same color
                             for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
                                 if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first || copiedArrayOfTubes[k][l] == 'e') {
                                     continue;
-                                }
-                                else if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[i].first) {
+                                } else if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[i].first) {
                                     // swap the layer
                                     char tmp = copiedArrayOfTubes[k][l];
                                     copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
@@ -746,8 +747,7 @@ public class WaterSortSearch extends GenericSearch {
                             for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
                                 if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first || copiedArrayOfTubes[k][l] == 'e') {
                                     continue;
-                                }
-                                else if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[i].first) {
+                                } else if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[i].first) {
                                     // swap the layers
                                     char tmp = copiedArrayOfTubes[k][l];
                                     copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
@@ -781,8 +781,7 @@ public class WaterSortSearch extends GenericSearch {
                             for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
                                 if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first) {
                                     continue;
-                                }
-                                else if (copiedArrayOfTubes[k][l] == 'e') {
+                                } else if (copiedArrayOfTubes[k][l] == 'e') {
                                     // swap the layers
                                     char tmp = copiedArrayOfTubes[k][l];
                                     copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
@@ -803,7 +802,7 @@ public class WaterSortSearch extends GenericSearch {
                     }
 
                     // if the layer is swapped then we continue to the rest of layers
-                    if(isSwapped) {
+                    if (isSwapped) {
                         continue;
                     }
 
@@ -819,8 +818,7 @@ public class WaterSortSearch extends GenericSearch {
                             for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
                                 if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first) {
                                     continue;
-                                }
-                                else if (copiedArrayOfTubes[k][l] == 'e') {
+                                } else if (copiedArrayOfTubes[k][l] == 'e') {
                                     // swap the layers
                                     char tmp = copiedArrayOfTubes[k][l];
                                     copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
@@ -839,8 +837,7 @@ public class WaterSortSearch extends GenericSearch {
                             break;
                         }
                     }
-                }
-                else if (copiedArrayOfTubes[i][j] == 'e') { // swap an empty layer with any of the colored layers with same color as the label of the bottle
+                } else if (copiedArrayOfTubes[i][j] == 'e') { // swap an empty layer with any of the colored layers with same color as the label of the bottle
 
                     for (int k = 0; k < copiedArrayOfTubes.length; k++) {
                         if (i == k) continue; // do not swap two colored layers from the same bottle
@@ -849,8 +846,7 @@ public class WaterSortSearch extends GenericSearch {
                             for (int l = 0; l < copiedArrayOfTubes[k].length; l++) {
                                 if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[k].first || copiedArrayOfTubes[k][l] == 'e') {
                                     continue;
-                                }
-                                else if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[i].first) {
+                                } else if (copiedArrayOfTubes[k][l] == arrayOfColoredLabels[i].first) {
                                     // swap the layer
                                     char tmp = copiedArrayOfTubes[k][l];
                                     copiedArrayOfTubes[k][l] = copiedArrayOfTubes[i][j];
