@@ -9,6 +9,7 @@ public class Node {
     public int depth;
     public int heuristicCost = -1;
 
+
     public Node(State state, Node parent, String operator, int pathCost, int depth) {
         this.state = state;
         this.parent = parent;

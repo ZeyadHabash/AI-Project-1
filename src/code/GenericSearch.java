@@ -61,7 +61,7 @@ public class GenericSearch {
     private static Node depthLimitedSearch(BaseQueue queue, Problem problem, int depthLimit) {
         while (!queue.isEmpty()) {
             Node node = queue.dequeue();
-            System.out.println("Current State: " + node.state + "    depth:" + node.depth + "     limit" + depthLimit);
+//            System.out.println("Current State: " + node.state + "    depth:" + node.depth + "     limit" + depthLimit);
             if (problem.goalTest(node.state))
                 return node;
             if (node.depth < depthLimit ) {
@@ -92,11 +92,11 @@ public class GenericSearch {
 
 
             if(problem.goalTest(node.state)) {
-                System.out.println(ConsoleColors.RED_BOLD + "Goal State: " + ConsoleColors.RESET + node.state);
+//                System.out.println(ConsoleColors.RED_BOLD + "Goal State: " + ConsoleColors.RESET + node.state);
                 return node;
             }
 
-            System.out.println(ConsoleColors.RED_BOLD + "Current State: " + ConsoleColors.RESET + node.state);
+//            System.out.println(ConsoleColors.RED_BOLD + "Current State: " + ConsoleColors.RESET + node.state);
             // TODO: enqueue next nodes in line
             switch (strategy) {
                 case "DF": case "BF": case "UC":
@@ -108,8 +108,6 @@ public class GenericSearch {
             }
         }
     }
-
-
 
 //    /**
 //     * Calculate the cost of pouring from the first bottle into the second bottle.

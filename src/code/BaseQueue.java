@@ -33,7 +33,7 @@ public class BaseQueue {
                         if (!visitedStates.contains(node.state.toString())) {
                             visitedStates.add(node.state.toString());
                             queue.addFirst(node);
-                            System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+//                            System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                         }
                     }
 
@@ -45,7 +45,7 @@ public class BaseQueue {
                         if (!visitedStates.contains(node.state.toString())) {
                             visitedStates.add(node.state.toString());
                             queue.addLast(node);
-                            System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+//                            System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                         }
                     }
 
@@ -64,7 +64,7 @@ public class BaseQueue {
                             // Insert the node at this location
                             queue.add(insertIndex, node);
 
-                            System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+//                            System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                         }
                     }
                     break;
@@ -105,7 +105,7 @@ public class BaseQueue {
                         visitedStates.add(node.state.toString());
                         node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost1((WaterSearchState) node.state));
                         queue.addLast(node);
-                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+//                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                     }
                 }
 
@@ -121,7 +121,7 @@ public class BaseQueue {
                         visitedStates.add(node.state.toString());
                         node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost2((WaterSearchState) node.state));
                         queue.addLast(node);
-                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+//                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                     }
                 }
 
@@ -137,7 +137,7 @@ public class BaseQueue {
                         visitedStates.add(node.state.toString());
                         node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost1((WaterSearchState) node.state));
                         queue.addLast(node);
-                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+//                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                     }
                 }
 
@@ -153,7 +153,7 @@ public class BaseQueue {
                         visitedStates.add(node.state.toString());
                         node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost2((WaterSearchState) node.state));
                         queue.addLast(node);
-                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+//                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                     }
                 }
 

@@ -109,9 +109,6 @@ public class WaterSortSearch extends GenericSearch {
         }
     }
 
-
-
-
     /**
      * Calculate the cost of pouring from the first bottle into the second bottle.
      * @param state the current state
@@ -217,6 +214,7 @@ public class WaterSortSearch extends GenericSearch {
      */
     public static String constructSolution(Node goalNode) {
         Node node = goalNode;
+        int pathCost = goalNode.pathCost;
         StringBuilder operations = new StringBuilder();
 
         while(node.parent != null) {
@@ -229,7 +227,7 @@ public class WaterSortSearch extends GenericSearch {
             node = node.parent;
         }
 
-        return operations.toString();
+        return operations.toString() + ";" + pathCost + ";" + "0";
     }
 
     /**
@@ -499,7 +497,7 @@ public class WaterSortSearch extends GenericSearch {
             Integer numOfColorOccurrence = mapElement.getValue();
 
             numberOfBottlesNeeded += (int) Math.ceil((double)(numOfColorOccurrence/state.numOfBottles));
-            System.out.println("Current Color: " + currentColor);
+//            System.out.println("Current Color: " + currentColor);
             int numberOfColorsAssignedToCurrentColor = colorLabelToListOfIndexMap.get(currentColor) != null ? colorLabelToListOfIndexMap.get(currentColor).size() : 0;
             int remainingNumberOfBottlesNeedForCurrentColor = numberOfBottlesNeeded - numberOfColorsAssignedToCurrentColor;
 
