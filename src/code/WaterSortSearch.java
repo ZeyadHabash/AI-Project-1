@@ -6,6 +6,7 @@ import java.util.List;
 public class WaterSortSearch extends GenericSearch {
 
     static Problem waterSearchProblem;
+    public static int nodesExpanded = 0;
 
     /**
      * Solves problem using given strategy
@@ -236,10 +237,12 @@ public class WaterSortSearch extends GenericSearch {
         Node node = goalNode;
         StringBuilder operations = new StringBuilder();
 
-        // Printing cost of reached goal
-        operations.insert(0, "Path Cost: " + node.pathCost + "\n");
-        // Verifies centering property
-        operations.insert(0, "\nHeuristic Cost: " + node.heuristicCost + "\n");
+//        // Printing cost of reached goal
+//        operations.insert(0, "Path Cost: " + node.pathCost + "\n");
+//        // Verifies centering property
+//        operations.insert(0, "\nHeuristic Cost: " + node.heuristicCost + "\n");
+
+        int goalPathCost = node.pathCost;
 
         while (node.parent != null) {
             if (operations.isEmpty()) {
@@ -249,6 +252,8 @@ public class WaterSortSearch extends GenericSearch {
             }
             node = node.parent;
         }
+
+        operations.append(";").append(goalPathCost).append(";").append(nodesExpanded);
 
         return operations.toString();
     }
