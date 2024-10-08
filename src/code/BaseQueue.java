@@ -50,32 +50,26 @@ public class BaseQueue {
                     }
 
                     break;
-                case "UC":
-                    // add to the queue in any order
 
+                case "UC":
                     for (Node node : nodes) {
                         if (!visitedStates.contains(node.state.toString())) {
                             visitedStates.add(node.state.toString());
-                            queue.addFirst(node);
+
+                            // Loop over the list to find the correct location
+                            int insertIndex = 0;
+                            while (insertIndex < queue.size() && queue.get(insertIndex).pathCost <= node.pathCost) {
+                                insertIndex++;
+                            }
+                            // Insert the node at this location
+                            queue.add(insertIndex, node);
+
                             System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
                         }
                     }
-                    this.sortCost();
                     break;
             }
         }
-    }
-
-
-    private void sortCost() {
-        System.out.println("I am in sorting");
-        List<Node> nodeList = new ArrayList<>();
-        while (!queue.isEmpty())
-            nodeList.add(queue.removeFirst());
-        nodeList.sort(Comparator.comparingInt(node -> node.pathCost));
-        for (Node node : nodeList)
-            queue.addLast(node);
-        System.out.println("queue"+ queue);
     }
 
     /**
@@ -121,7 +115,20 @@ public class BaseQueue {
                 break;
 
             case "GR2":
-                // TODO
+                // add the nodes to the end of the queue
+                for (Node node : nodes) {
+                    if (!visitedStates.contains(node.state.toString())) {
+                        visitedStates.add(node.state.toString());
+                        node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost2((WaterSearchState) node.state));
+                        queue.addLast(node);
+                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+                    }
+                }
+
+                // sort the queue
+                genericSort(strategy, heuristicNumber);
+
+                break;
 
             case "AS1":
                 // add to the queue in any order
@@ -140,7 +147,20 @@ public class BaseQueue {
                 break;
 
             case "AS2":
-                // TODO
+                // add to the queue in any order
+                for (Node node : nodes) {
+                    if (!visitedStates.contains(node.state.toString())) {
+                        visitedStates.add(node.state.toString());
+                        node.setHeuristicCost(WaterSortSearch.calculateHeuristicCost2((WaterSearchState) node.state));
+                        queue.addLast(node);
+                        System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+                    }
+                }
+
+                // sort the queue
+                genericSort(strategy, heuristicNumber);
+
+                break;
         }
     }
 
