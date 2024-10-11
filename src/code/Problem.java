@@ -15,7 +15,7 @@ public abstract class Problem {
 
     public abstract boolean goalTest(State state);
 
-    public abstract int pathCost();
+    public abstract int pathCost(State state, String operation);
 
     public abstract List<Node> expand(Node node);
 

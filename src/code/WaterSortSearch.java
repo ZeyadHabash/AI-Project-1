@@ -7,6 +7,7 @@ public class WaterSortSearch extends GenericSearch {
 
     static Problem waterSearchProblem;
     public static int nodesExpanded = 0;
+    public static boolean visualize = false;
 
     /**
      * Solves problem using given strategy
@@ -32,6 +33,7 @@ public class WaterSortSearch extends GenericSearch {
      * @return String representing the sequence of actions to perform (example: plan;pathCost;nodesExpanded)
      */
     public static String solve(String initialState, String strategy, boolean visualize) {
+        WaterSortSearch.visualize = visualize;
         // format of returned string
 
         // Step 1: parse the initial state
@@ -56,13 +58,14 @@ public class WaterSortSearch extends GenericSearch {
             }
 
             @Override
-            public int pathCost() {
-                // TODO
+            public int pathCost(State state, String operation) {
+                // TODO ask if we need to implement this
                 return 0;
             }
 
             @Override
             public List<Node> expand(Node node) {
+                nodesExpanded++;
                 WaterSearchState parentState = (WaterSearchState) node.state;
                 List<Node> listOfPossibleNextNodes = new ArrayList<>();
 
@@ -184,13 +187,6 @@ public class WaterSortSearch extends GenericSearch {
         return (secondBottleTopColor == 'e' || firstBottleTopColor == secondBottleTopColor) && firstBottleTopColor != 'e' && firstBottleIndex != secondBottleIndex && state.arrayOfTopPointers[secondBottleIndex] != 0;
     }
 
-
-    /**
-     * Calculate the cost of pouring from the first bottle into the second bottle.
-     * @param node the current node
-     * @return a list of nodes resulted from expanding the given node
-     */
-
     /**
      * Parse the initial state into an array of arrays of characters
      *
@@ -232,6 +228,7 @@ public class WaterSortSearch extends GenericSearch {
      * @return string representing the path of operations performed
      */
     public static String constructSolution(Node goalNode) {
+        nodesExpanded++;
         Node node = goalNode;
         StringBuilder operations = new StringBuilder();
 

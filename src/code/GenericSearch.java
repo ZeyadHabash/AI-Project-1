@@ -63,9 +63,10 @@ public class GenericSearch {
      * @return a goal node
      */
     private static Node depthLimitedSearch(BaseQueue queue, Problem problem, int depthLimit) {
+        System.out.println( ConsoleColors.PURPLE + "limit: " + ConsoleColors.RESET + depthLimit);
         while (!queue.isEmpty()) {
             Node node = queue.dequeue();
-            System.out.println("Current State: " + node.state + "    depth:" + node.depth + "     limit" + depthLimit);
+            System.out.println(ConsoleColors.RED_BOLD + "Current State: " + ConsoleColors.RESET + node.state );
             if (problem.goalTest(node.state))
                 return node;
             if (node.depth < depthLimit) {

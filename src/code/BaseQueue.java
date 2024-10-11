@@ -105,7 +105,6 @@ public class BaseQueue {
      * Dequeue a node
      **/
     public Node dequeue() {
-        WaterSortSearch.nodesExpanded++;
         // return first element and remove it from arraylist
         return queue.removeFirst();
     }
