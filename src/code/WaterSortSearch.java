@@ -1,6 +1,7 @@
 package code;
 
 import java.util.*;
+import java.util.function.Function;
 
 
 public class WaterSortSearch extends GenericSearch {
@@ -91,10 +92,31 @@ public class WaterSortSearch extends GenericSearch {
             }
         };
 
+        Node goalNode = null;
         // Step 3: Perform general search
-        Node goalNode = generalSearch(waterSearchProblem, strategy);
+        switch (strategy) {
+            case "BF":
+                goalNode = breadthFirstSearch(waterSearchProblem);
+                break;
+            case "DF":
+                goalNode = depthFirstSearch(waterSearchProblem);
+                break;
+            case "ID":
+                goalNode = iterativeDeepeningSearch(waterSearchProblem);
+                break;
+            case "UC":
+                goalNode = uniformCostSearch(waterSearchProblem);
+                break;
+            case "GR1", "GR2":
+                goalNode = greedySearch(waterSearchProblem);
+                break;
+            case "AS1", "AS2":
+                goalNode = aStarSearch(waterSearchProblem);
+                break;
+        }
 
-        return goalNode != null ? constructSolution(goalNode) : "NOSOLUTION";
+
+        return goalNode != null ? constructSolution(goalNode) : "nosolution";
     }
 
 
@@ -228,7 +250,7 @@ public class WaterSortSearch extends GenericSearch {
      * @return string representing the path of operations performed
      */
     public static String constructSolution(Node goalNode) {
-        nodesExpanded++;
+        nodesExpanded++; // add the goal node to the nodes expanded
         Node node = goalNode;
         StringBuilder operations = new StringBuilder();
 
@@ -313,7 +335,7 @@ public class WaterSortSearch extends GenericSearch {
                 char initialColor = state.arrayOfTubes[i][state.arrayOfTopPointers[i]];
                 // traverse over a single tube
                 for (int j = state.arrayOfTopPointers[i]; j < state.bottleCapacity; j++) {
-                        if (state.arrayOfTubes[i][j] != initialColor) {
+                    if (state.arrayOfTubes[i][j] != initialColor) {
                         flag = false;
                     }
                 }
@@ -849,9 +871,7 @@ public class WaterSortSearch extends GenericSearch {
                 // if the colored layer have the same color as the color of the bottle then do not do anything
                 if (copiedArrayOfTubes[i][j] == label) {
                     continue;
-                }
-
-                else if (copiedArrayOfTubes[i][j] == 'e') { // swap an empty layer with any of the colored layers with same color as the label of the bottle
+                } else if (copiedArrayOfTubes[i][j] == 'e') { // swap an empty layer with any of the colored layers with same color as the label of the bottle
 
                     for (int k = 0; k < copiedArrayOfTubes.length; k++) {
                         if (i == k) continue; // do not swap two colored layers from the same bottle
