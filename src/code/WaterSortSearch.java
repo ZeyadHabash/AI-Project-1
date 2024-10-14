@@ -402,7 +402,7 @@ public class WaterSortSearch extends GenericSearch {
 
         // initialize the arrayOfColoredLabels
         for (int i = 0; i < state.numOfBottles; i++) {
-            arrayOfColoredLabels[i] = new Pair<>('e', 0);
+            arrayOfColoredLabels[i] = new Pair<>('$', 0);
         }
 
         // a hashmap that keep track the list of bottles assigned to each color which is the key in the hashmap and the number of occurrence of the color in the bottle
@@ -420,7 +420,6 @@ public class WaterSortSearch extends GenericSearch {
         int totalNumberOfDistinctColors = 0; // number of distinct colors in the problem
         int numberOfBottlesNeeded = 0; // total number of bottles needed
 
-        /// Step 1: Set the color of each bottle based on the largest occurrence of a colored layer in the bottle
 
         // traverse over the list of bottles
         for (int i = 0; i < state.numOfBottles; i++) {
@@ -455,16 +454,16 @@ public class WaterSortSearch extends GenericSearch {
             }
         }
 
-        /// Step 2: Calculate the number of bottles required for each color
+        /// Step 1: Calculate the number of bottles required for each color
         for (Map.Entry<Character, Integer> mapElement : colorToColorCountMap.entrySet()) {
             Integer numOfColorOccurrence = mapElement.getValue();
-            numberOfBottlesNeeded += (int) Math.ceil((double) (numOfColorOccurrence / state.numOfBottles));
+            numberOfBottlesNeeded += (int) Math.ceil((double) (numOfColorOccurrence / state.bottleCapacity));
         }
 
-        /// Step 3: Calculate the number of remaining bottles
+        /// Step 2: Calculate the number of remaining bottles
         int totalNumberOfRemainingBottles = state.numOfBottles - numberOfBottlesNeeded;
 
-        /// Step 4: Assign each bottle a colored label
+        /// Step 3: Assign each bottle a colored label
         // traverse over the list of bottles
         for (int i = 0; i < state.numOfBottles; i++) {
             // if the bottle is empty then we assign it a label "$" which indicates none
@@ -485,6 +484,9 @@ public class WaterSortSearch extends GenericSearch {
                 // Or, if the bottles contains equal distribution of all colors in it. Then,
                 // we would assign it a label with the same color as their bottom layer
                 for (int j = 0; j < state.bottleCapacity; j++) {
+                    // skip the empty layers
+                    if (state.arrayOfTubes[i][j] == 'e') continue;
+
                     // if colorToColorCountPerBottleMap contains the color then increment the value by 1
                     if (colorToColorCountPerBottleMap.containsKey(state.arrayOfTubes[i][j])) {
                         colorToColorCountPerBottleMap.put(state.arrayOfTubes[i][j], colorToColorCountPerBottleMap.get(state.arrayOfTubes[i][j]) + 1);
@@ -527,6 +529,7 @@ public class WaterSortSearch extends GenericSearch {
             }
         }
 
+
         /// Step 5: check if there does not exist a color that need a bottle to be assigned to them
 
         // a hashmap that map each color the number of bottles it needs
@@ -540,10 +543,9 @@ public class WaterSortSearch extends GenericSearch {
             Character currentColor = mapElement.getKey();
             Integer numOfColorOccurrence = mapElement.getValue();
 
-            numberOfBottlesNeeded += (int) Math.ceil((double) (numOfColorOccurrence / state.numOfBottles));
-//            System.out.println("Current Color: " + currentColor);
+            int numberOfBottlesNeededPerColor = (int) Math.ceil((double) (numOfColorOccurrence / state.bottleCapacity));
             int numberOfColorsAssignedToCurrentColor = colorLabelToListOfIndexMap.get(currentColor) != null ? colorLabelToListOfIndexMap.get(currentColor).size() : 0;
-            int remainingNumberOfBottlesNeedForCurrentColor = numberOfBottlesNeeded - numberOfColorsAssignedToCurrentColor;
+            int remainingNumberOfBottlesNeedForCurrentColor = numberOfBottlesNeededPerColor - numberOfColorsAssignedToCurrentColor;
 
             if (remainingNumberOfBottlesNeedForCurrentColor > 0) {
                 colorsToCountOfBottlesNeededMap.put(currentColor, remainingNumberOfBottlesNeedForCurrentColor);
@@ -585,24 +587,23 @@ public class WaterSortSearch extends GenericSearch {
 
         }
 
-        // a variable representing the current bottle index that will be used later on
-        int bottleIndex = 0;
-
         // a list that stores the indices of bottles that are excess or empty bottles and count of layers within bottle
         List<Pair<Integer, Integer>> listOfExcessBottleIndex = new LinkedList<>();
 
         // traverse over the list of bottles
-        for (HashMap<Character, Integer> bottle : listOfBottlesWithNumberOfOccurrenceOfEachColor) {
+        for (int i = 0; i < listOfBottlesWithNumberOfOccurrenceOfEachColor.size(); i++) {
 
-            // if the bottles is empty then store it in the queue
-            if (state.arrayOfTopPointers[bottleIndex] == -1) {
-                listOfExcessBottleIndex.add(new Pair<>(bottleIndex++, 0));
+            HashMap<Character, Integer> bottle = listOfBottlesWithNumberOfOccurrenceOfEachColor.get(i);
+
+            // if the bottles is empty then store it in the list
+            if (state.arrayOfTopPointers[i] == -1) {
+                listOfExcessBottleIndex.add(new Pair<>(i, 0));
                 continue;
             }
 
             // if the current bottle is included in the set of excess bottle index.
             // Hence, we can change its color label.
-            if (setOfExcessBottlesIndex.contains(bottleIndex)) {
+            if (setOfExcessBottlesIndex.contains(i)) {
 
                 // store the values in the hashmap in a list
                 List<Pair<Character, Integer>> listOfNumberOfOccurrenceOfEachColor = new ArrayList<>();
@@ -626,11 +627,11 @@ public class WaterSortSearch extends GenericSearch {
                         flag = true;
 
                         // assign the label of the bottle to the color
-                        arrayOfColoredLabels[bottleIndex].first = colorElement.first;
-                        arrayOfColoredLabels[bottleIndex].second = colorElement.second;
+                        arrayOfColoredLabels[i].first = colorElement.first;
+                        arrayOfColoredLabels[i].second = colorElement.second;
 
                         // remove bottle index from setOfExcessBottlesIndex as it have an assigned label
-                        setOfExcessBottlesIndex.remove(bottleIndex);
+                        setOfExcessBottlesIndex.remove(i);
 
                         // reduce count of the needed bottle for the color in colorsToCountOfBottlesNeededMap
                         colorsToCountOfBottlesNeededMap.put(colorElement.first, colorsToCountOfBottlesNeededMap.get(colorElement.first) - 1);
@@ -638,27 +639,26 @@ public class WaterSortSearch extends GenericSearch {
                         if (colorsToCountOfBottlesNeededMap.get(colorElement.first) == 0) {
                             colorsToCountOfBottlesNeededMap.remove(colorElement.first);
                         }
+
+                        break;
                     }
                 }
 
                 // if the bottle is not assigned to any color
                 if (!flag) {
-                    listOfExcessBottleIndex.add(new Pair(bottleIndex, state.arrayOfTopPointers[bottleIndex] + 1));
+                    listOfExcessBottleIndex.add(new Pair(i, state.arrayOfTopPointers[i] + 1));
                 }
             }
-
-            bottleIndex++;
         }
 
         // for the remaining bottles that are not assigned and empty bottles
-        // we want to assign the empty bottles labels with colors that contains the minimum number of color occurrence
+        // we want to assign the empty bottles labels with colors that contains the minimum remaining number of color occurrence
         // we need to calculate the remaining number of colored layers for colors that need bottles
         List<Pair<Character, Integer>> listOfColorsWithRemaining = new ArrayList<>();
 
         for (Map.Entry<Character, Integer> mapEntry : colorsToCountOfBottlesNeededMap.entrySet()) {
-
             Character currentColor = mapEntry.getKey();
-            int numberOfBottlesAssignedToColor = colorLabelToListOfIndexMap.get(currentColor).size();
+            int numberOfBottlesAssignedToColor = colorLabelToListOfIndexMap.get(currentColor) != null ? colorLabelToListOfIndexMap.get(currentColor).size() : 0;
             int numberOfOccurrencesOfColorInProblem = colorToColorCountMap.get(currentColor);
             int numberOfRemainingColors = numberOfOccurrencesOfColorInProblem - numberOfBottlesAssignedToColor * state.bottleCapacity;
 
@@ -856,18 +856,25 @@ public class WaterSortSearch extends GenericSearch {
                             break;
                         }
                     }
-
                 }
             }
         }
+
+        /** Step 6.5:
+         *  if their exist a colored layer that is placed in a wrong tube
+         *  then we would swap it with one of the empty layers in tubes assigned with it as a label
+         */
         // traverse over the array ot bottles
         for (int i = 0; i < copiedArrayOfTubes.length; i++) {
             // get the color label of the current bottle
             char label = arrayOfColoredLabels[i].first;
+
             // traverse over the layers in the current bottle
             for (int j = 0; j < copiedArrayOfTubes[i].length; j++) {
+
                 // a flag that checks whether the colored layer is swapped
                 boolean isSwapped = false;
+
                 // if the colored layer have the same color as the color of the bottle then do not do anything
                 if (copiedArrayOfTubes[i][j] == label) {
                     continue;

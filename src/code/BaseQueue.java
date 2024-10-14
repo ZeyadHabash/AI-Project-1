@@ -26,11 +26,14 @@ public class BaseQueue {
                 queuingFunction.accept(queue, node); // Apply queuing function to node
                 if (queue.size() > initialSize) {
                     visitedStates.add(node.state.toString()); // only add to visited states if the node is actually added to the queue
-                    System.out.println(ConsoleColors.GREEN_BOLD + "ENQUEUED");
+                    if (WaterSortSearch.visualize)
+                        System.out.println(ConsoleColors.GREEN_BOLD + "ENQUEUED");
                 } else {
-                    System.out.println(ConsoleColors.RED_BOLD + "NOT ENQUEUED");
+                    if (WaterSortSearch.visualize)
+                        System.out.println(ConsoleColors.RED_BOLD + "NOT ENQUEUED");
                 }
-                System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
+                if (WaterSortSearch.visualize)
+                    System.out.println(ConsoleColors.BLUE_BOLD + " * Child Node: " + ConsoleColors.RESET + node);
             }
         }
     }

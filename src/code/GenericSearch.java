@@ -59,12 +59,14 @@ public class GenericSearch {
 
             // check if the goal state is reached
             if (problem.goalTest(node.state)) {
-                System.out.println(ConsoleColors.GREEN_BOLD + "Goal State: " + ConsoleColors.RESET + node.state);
+                if (WaterSortSearch.visualize)
+                    System.out.println(ConsoleColors.GREEN_BOLD + "Goal State: " + ConsoleColors.RESET + node.state);
                 return node; // return the goal node
             }
 
             // if the goal state is not reached, expand the node
-            System.out.println(ConsoleColors.RED_BOLD + "Current State: " + ConsoleColors.RESET + node.state);
+            if (WaterSortSearch.visualize)
+                System.out.println(ConsoleColors.RED_BOLD + "Current State: " + ConsoleColors.RESET + node.state);
 
             queue.enqueue(problem.expand(node), queuingFunction); // add the children nodes to the queue
         }
@@ -142,7 +144,8 @@ public class GenericSearch {
      * @return a goal node
      */
     public static Node depthLimitedSearch(Problem problem, int depthLimit) {
-        System.out.println(ConsoleColors.PURPLE + "limit: " + ConsoleColors.RESET + depthLimit);
+        if (WaterSortSearch.visualize)
+            System.out.println(ConsoleColors.PURPLE + "limit: " + ConsoleColors.RESET + depthLimit);
         BiConsumer<ArrayList<Node>, Node> queuingFunction = (queue, node) -> {
             if (node.depth <= depthLimit) { // check if the depth is within the limit
                 queue.addFirst(node); // add to the beginning of the queue
