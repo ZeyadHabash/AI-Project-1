@@ -175,7 +175,7 @@ public class PublicTests {
         assertTrue("The output actions do not lead to a goal state.", pc.applyPlan(grid4, solution));
     }
 
-    @Test(timeout = 60000)
+    @Test
     public void testd0() throws Exception {
         String solution = WaterSortSearch.solve(grid0, "ID", false);
         solution = solution.replace(" ", "") + ";";

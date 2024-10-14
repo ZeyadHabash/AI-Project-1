@@ -12,8 +12,8 @@ public class Driver {
 //        System.out.println(WaterSortSearch.solve(initialState, "UC", false));
 //        System.out.println(WaterSortSearch.solve(initialState, "ID", false));
 //        System.out.println(WaterSortSearch.solve(initialState, "GR1", false));
-//        System.out.println(WaterSortSearch.solve(initialState, "GR2", false));
+        System.out.println(WaterSortSearch.solve(initialState, "GR2", false));
 //        System.out.println(WaterSortSearch.solve(initialState, "AS1", false));
-        System.out.println(WaterSortSearch.solve(initialState, "AS2", false));
+//        System.out.println(WaterSortSearch.solve(initialState, "AS2", false));
     }
 }

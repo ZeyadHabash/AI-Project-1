@@ -41,16 +41,16 @@ public class GenericSearch {
         );
     }
 
-
     /**
-     * Calculate the cost of pouring from the first bottle into the second bottle.
+     * Perform a general search algorithm
      *
      * @param problem         general search problem
      * @param queuingFunction a function to decide how to enqueue the nodes
      * @return a goal node
      */
     public static Node generalSearch(Problem problem, BiConsumer<ArrayList<Node>, Node> queuingFunction) {
-        BaseQueue queue = makeQueue(makeNode(problem.initialState)); // initialize the queue
+
+        BaseQueue queue = makeQueue(makeNode(problem.initialState));
 
         while (true) {
             if (queue.isEmpty()) return null;
@@ -59,7 +59,7 @@ public class GenericSearch {
 
             // check if the goal state is reached
             if (problem.goalTest(node.state)) {
-                System.out.println(ConsoleColors.RED_BOLD + "Goal State: " + ConsoleColors.RESET + node.state);
+                System.out.println(ConsoleColors.GREEN_BOLD + "Goal State: " + ConsoleColors.RESET + node.state);
                 return node; // return the goal node
             }
 
@@ -97,6 +97,27 @@ public class GenericSearch {
         return generalSearch(problem, queuingFunction);
     }
 
+
+    /**
+     * Performs Uniform Cost Search
+     *
+     * @param problem general search problem
+     * @return a goal node
+     */
+    public static Node uniformCostSearch(Problem problem) {
+        BiConsumer<ArrayList<Node>, Node> queuingFunction = (queue, node) -> {
+            int index = 0;
+            for (Node n : queue) {
+                if (n.pathCost > node.pathCost) {
+                    break;
+                }
+                index++;
+            }
+            queue.add(index, node); // add the node to the queue based on the path cost
+        };
+        return generalSearch(problem, queuingFunction);
+    }
+
     /**
      * Loops over different values of Depth to perform iterative deepening
      *
@@ -126,27 +147,6 @@ public class GenericSearch {
             if (node.depth <= depthLimit) { // check if the depth is within the limit
                 queue.addFirst(node); // add to the beginning of the queue
             }
-            // if the depth is not within the limit, do not add the node to the queue
-        };
-        return generalSearch(problem, queuingFunction);
-    }
-
-    /**
-     * Performs Uniform Cost Search
-     *
-     * @param problem general search problem
-     * @return a goal node
-     */
-    public static Node uniformCostSearch(Problem problem) {
-        BiConsumer<ArrayList<Node>, Node> queuingFunction = (queue, node) -> {
-            int index = 0;
-            for (Node n : queue) {
-                if (n.pathCost > node.pathCost) {
-                    break;
-                }
-                index++;
-            }
-            queue.add(index, node); // add the node to the queue based on the path cost
         };
         return generalSearch(problem, queuingFunction);
     }
@@ -158,7 +158,7 @@ public class GenericSearch {
     /**
      * Performs Greedy Best First Search
      *
-     * @param problem            general search problem
+     * @param problem general search problem
      * @return a goal node
      */
     public static Node greedySearch(Problem problem) {
@@ -179,7 +179,7 @@ public class GenericSearch {
     /**
      * Performs A* Search
      *
-     * @param problem            general search problem
+     * @param problem general search problem
      * @return a goal node
      */
     public static Node aStarSearch(Problem problem) {
