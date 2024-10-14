@@ -119,9 +119,9 @@ public class BaseQueue {
     /**
      * Sort Basic Queue
      **/
-    private void sort() {
+    /*private void sort() {
         // TODO
-    }
+    }*/
 
     @Override
     public String toString() {
