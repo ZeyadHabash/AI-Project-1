@@ -313,7 +313,7 @@ public class WaterSortSearch extends GenericSearch {
                 char initialColor = state.arrayOfTubes[i][state.arrayOfTopPointers[i]];
                 // traverse over a single tube
                 for (int j = state.arrayOfTopPointers[i]; j < state.bottleCapacity; j++) {
-                    if (state.arrayOfTubes[i][j] != initialColor) {
+                        if (state.arrayOfTubes[i][j] != initialColor) {
                         flag = false;
                     }
                 }
@@ -834,7 +834,24 @@ public class WaterSortSearch extends GenericSearch {
                             break;
                         }
                     }
-                } else if (copiedArrayOfTubes[i][j] == 'e') { // swap an empty layer with any of the colored layers with same color as the label of the bottle
+
+                }
+            }
+        }
+        // traverse over the array ot bottles
+        for (int i = 0; i < copiedArrayOfTubes.length; i++) {
+            // get the color label of the current bottle
+            char label = arrayOfColoredLabels[i].first;
+            // traverse over the layers in the current bottle
+            for (int j = 0; j < copiedArrayOfTubes[i].length; j++) {
+                // a flag that checks whether the colored layer is swapped
+                boolean isSwapped = false;
+                // if the colored layer have the same color as the color of the bottle then do not do anything
+                if (copiedArrayOfTubes[i][j] == label) {
+                    continue;
+                }
+
+                else if (copiedArrayOfTubes[i][j] == 'e') { // swap an empty layer with any of the colored layers with same color as the label of the bottle
 
                     for (int k = 0; k < copiedArrayOfTubes.length; k++) {
                         if (i == k) continue; // do not swap two colored layers from the same bottle
