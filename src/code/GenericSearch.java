@@ -3,7 +3,8 @@ package code;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
+
+import static java.lang.Math.max;
 
 public class GenericSearch {
 
@@ -131,6 +132,8 @@ public class GenericSearch {
             Node result = depthLimitedSearch(problem, depthLimit);
             if (result != null)
                 return result;
+            if (problem.treeDepth < depthLimit)
+                return null;
             depthLimit++;
         }
     }
@@ -146,9 +149,11 @@ public class GenericSearch {
     public static Node depthLimitedSearch(Problem problem, int depthLimit) {
 //        if (WaterSortSearch.visualize)
 //            System.out.println(ConsoleColors.PURPLE + "limit: " + ConsoleColors.RESET + depthLimit);
+
         BiConsumer<ArrayList<Node>, Node> queuingFunction = (queue, node) -> {
             if (node.depth <= depthLimit) { // check if the depth is within the limit
                 queue.addFirst(node); // add to the beginning of the queue
+                problem.treeDepth = max(problem.treeDepth, node.depth); // update the tree depth
             }
         };
         return generalSearch(problem, queuingFunction);

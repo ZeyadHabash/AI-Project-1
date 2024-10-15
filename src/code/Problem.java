@@ -5,6 +5,7 @@ import java.util.List;
 public abstract class Problem {
     public State initialState;
     public String[] operators;
+    public int treeDepth = 0;
 
     public Problem(State initialState, String[] operators) {
         this.initialState = initialState;

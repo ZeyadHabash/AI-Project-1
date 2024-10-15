@@ -21,6 +21,13 @@ public class Driver {
                 "e,e,e,e,e,e;" +
                 "e,e,e,e,e,e;";
 
+//        String initialState = "4;" +
+//                "4;" +
+//                "g,r,b,y;" +
+//                "r,g,b,o;" +
+//                "y,o,g,y;" +
+//                "e,e,e,e";
+
 //        System.out.println(WaterSortSearch.solve(initialState, "BF", false));
 //        System.out.println(WaterSortSearch.solve(initialState, "DF", false));
 //        System.out.println(WaterSortSearch.solve(initialState, "UC", false));
@@ -31,10 +38,10 @@ public class Driver {
 //        System.out.println(WaterSortSearch.solve(initialState, "AS2", false));
 
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "BF", false), "Breadth First Search");
-//        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "DF", false), "Depth First Search");
+        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "DF", true), "Depth First Search");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "UC", false), "Uniform Cost Search");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "ID", false), "Iterative Deepening Search");
-        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "GR1", true), "Greedy Search 1");
+//        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "GR1", true), "Greedy Search 1");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "GR2", false), "Greedy Search 2");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "AS1", false), "A* Search 1");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "AS2", false), "A* Search 2");
