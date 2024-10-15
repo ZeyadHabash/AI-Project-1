@@ -529,7 +529,6 @@ public class WaterSortSearch extends GenericSearch {
             }
         }
 
-
         /// Step 5: check if there does not exist a color that need a bottle to be assigned to them
 
         // a hashmap that map each color the number of bottles it needs
@@ -694,6 +693,7 @@ public class WaterSortSearch extends GenericSearch {
         for (int i = 0; i < state.arrayOfTubes.length; i++) {
             copiedArrayOfTubes[i] = state.arrayOfTubes[i].clone();
         }
+
         // create an array that contains the count of the number colored layers in every bottle
         int[] arrayOfNumberOfColoredLayers = new int[state.numOfBottles];
 
@@ -702,10 +702,10 @@ public class WaterSortSearch extends GenericSearch {
 
         // get the count of the number of colored layers in every bottle
         for (int i = 0; i < state.arrayOfTopPointers.length; i++) {
-            arrayOfNumberOfColoredLayers[i] = state.arrayOfTopPointers[i] + 1;
+            arrayOfNumberOfColoredLayers[i] = state.bottleCapacity - state.arrayOfTopPointers[i];
         }
 
-        // traverse over the array ot bottles
+        // traverse over the array of bottles
         for (int i = 0; i < copiedArrayOfTubes.length; i++) {
             // get the color label of the current bottle
             char label = arrayOfColoredLabels[i].first;
