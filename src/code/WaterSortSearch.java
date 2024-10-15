@@ -119,7 +119,6 @@ public class WaterSortSearch extends GenericSearch {
         return goalNode != null ? constructSolution(goalNode) : "NOSOLUTION";
     }
 
-
     /**
      * Create a new node from pouring from the ith tube into the jth tube and add it to the listOfPossibleNextNodes
      *
@@ -253,11 +252,7 @@ public class WaterSortSearch extends GenericSearch {
         nodesExpanded++; // add the goal node to the nodes expanded
         Node node = goalNode;
         StringBuilder operations = new StringBuilder();
-
-//        // Printing cost of reached goal
-//        operations.insert(0, "Path Cost: " + node.pathCost + "\n");
-//        // Verifies centering property
-//        operations.insert(0, "\nHeuristic Cost: " + node.heuristicCost + "\n");
+        StringBuilder pathDetails = new StringBuilder();
 
         int goalPathCost = node.pathCost;
 
@@ -267,7 +262,14 @@ public class WaterSortSearch extends GenericSearch {
             } else {
                 operations.insert(0, node.operator + ",");
             }
+            pathDetails.insert(0, ConsoleColors.RED_BOLD + node.operator + ": \n" + ConsoleColors.BLUE_BOLD + node.state.toString() + "\n" + ConsoleColors.RESET);
             node = node.parent;
+        }
+
+        pathDetails.insert(0, ConsoleColors.RED_BOLD +  "Root: \n" + ConsoleColors.BLUE_BOLD + node.state.toString() + "\n" + ConsoleColors.RESET);
+
+        if (visualize) {
+            System.out.println(pathDetails.toString());
         }
 
         operations.append(";").append(goalPathCost).append(";").append(nodesExpanded);

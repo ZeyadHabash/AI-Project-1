@@ -34,7 +34,7 @@ public class Driver {
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "DF", false), "Depth First Search");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "UC", false), "Uniform Cost Search");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "ID", false), "Iterative Deepening Search");
-        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "GR1", false), "Greedy Search 1");
+        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "GR1", true), "Greedy Search 1");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "GR2", false), "Greedy Search 2");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "AS1", false), "A* Search 1");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "AS2", false), "A* Search 2");
@@ -61,7 +61,7 @@ public class Driver {
 
         String formattedResult = formatResult(result, 100);
         System.out.println(ConsoleColors.RED_BOLD + strategyName + ConsoleColors.GREEN_BOLD + " - CPU Time: " + ConsoleColors.RESET + cpuTime + " ms," + ConsoleColors.BLUE_BOLD + " Memory Used: " + ConsoleColors.RESET + memoryUsed + " KB," + ConsoleColors.PURPLE_BOLD + " CPU Utilization: " + ConsoleColors.RESET + String.format("%.2f", cpuUtilization) + " %");
-        System.out.println(ConsoleColors.YELLOW_BOLD + "Path: " + ConsoleColors.RESET + formattedResult);
+        System.out.println(ConsoleColors.YELLOW_BOLD + "Path: " + ConsoleColors.RESET + result);
     }
 
     private static String formatResult(String result, int maxLength) {
