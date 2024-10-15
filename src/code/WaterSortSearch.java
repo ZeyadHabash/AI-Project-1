@@ -116,7 +116,7 @@ public class WaterSortSearch extends GenericSearch {
         }
 
 
-        return goalNode != null ? constructSolution(goalNode) : "nosolution";
+        return goalNode != null ? constructSolution(goalNode) : "NOSOLUTION";
     }
 
 

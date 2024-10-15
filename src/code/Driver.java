@@ -34,10 +34,10 @@ public class Driver {
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "DF", false), "Depth First Search");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "UC", false), "Uniform Cost Search");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "ID", false), "Iterative Deepening Search");
-//        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "GR1", false), "Greedy Search 1");
+        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "GR1", false), "Greedy Search 1");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "GR2", false), "Greedy Search 2");
 //        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "AS1", false), "A* Search 1");
-        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "AS2", false), "A* Search 2");
+//        measureAndPrintPerformance(() -> WaterSortSearch.solve(initialState, "AS2", false), "A* Search 2");
     }
 
     private static void measureAndPrintPerformance(Supplier<String> strategy, String strategyName) {
