@@ -34,6 +34,7 @@ public class WaterSortSearch extends GenericSearch {
      * @return String representing the sequence of actions to perform (example: plan;pathCost;nodesExpanded)
      */
     public static String solve(String initialState, String strategy, boolean visualize) {
+        nodesExpanded = 0;
         WaterSortSearch.visualize = visualize;
         // format of returned string
 
